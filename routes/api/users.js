@@ -1,12 +1,11 @@
+import {
+    users_get
+} from '../../controllers/APIController.js';
 import { Router } from 'express';
-import User from '../../models/user.js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
-    const user = await User.find({}).orFail(() => new Error('No Users found'));
-    return res.json(user);
-});
+router.get('/', users_get);
 
 router.post('/', async (req, res) => {
     res.send('Form submit to create a new user');

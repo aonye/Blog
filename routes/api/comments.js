@@ -1,16 +1,41 @@
+import {
+    comments_get
+}
+    from '../../controllers/APIController.js';
 import { Router } from 'express';
-import Comment from '../../models/comment.js';
-import x from './exports.js';
 const router = Router();
 
-router.get('/', async (req, res) => {
-    const comment = await Comment.find({}).orFail(() => new Error('No Comments found'));
-    return res.json(comment);
-});
+router.get('/', comments_get);
 
-console.log(x);
+// router.post('/', [
+//     body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+//     body('comment').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
 
-router.post('/', x);
+//     (req, res, next) => {
+
+//         const errors = validationResult(req);
+
+//         let comment = new Comment(
+//             {
+//                 author: req.body.author,
+//                 comment: req.body.comment,
+//                 timestamp: new Date(),
+//             });
+
+//         if (!errors.isEmpty()) {
+//             //fix paths
+//             console.log(errors.array());
+//             return res.redirect('/api');
+//             //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+//         }
+
+//         comment.save(err => {
+//             if (err) { return next(err); }
+//             return res.redirect('/api/comments');
+//             //fix this
+//         });
+//     }
+// ]);
 
 
 

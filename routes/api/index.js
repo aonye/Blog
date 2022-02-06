@@ -1,3 +1,7 @@
+import {
+    index_get
+}
+    from '../../controllers/APIController.js';
 import posts from './posts.js';
 import comments from './comments.js';
 import users from './users.js';
@@ -6,9 +10,7 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.get('/', (req, res) => {
-    res.json('Welcome to the API');
-});
+router.get('/', index_get);
 
 // app.post('/api/posts', verifyToken, (req, res) => {  
 //     jwt.verify(req.token, 'secretkey', (err, authData) => {
