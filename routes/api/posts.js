@@ -1,5 +1,6 @@
 import {
-    posts_get
+    posts_get,
+    posts_post
 } from '../../controllers/APIController.js';
 import { Router } from 'express';
 
@@ -7,9 +8,7 @@ const router = Router();
 
 router.get('/', posts_get);
 
-router.post('/', async (req, res) => {
-    res.send('Form submits for a new post');
-});
+router.post('/', posts_post);
 
 // let PostSchema = new Schema(
 //     {

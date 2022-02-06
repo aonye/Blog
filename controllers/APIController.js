@@ -1,4 +1,4 @@
-//const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 // const User = require('../models/user');
 // const Message = require('../models/message');
 // const passport = require('../passport');
@@ -18,10 +18,89 @@ export const comments_get = async (req, res) => {
     return res.json(comment);
 };
 
+export const comments_post = [ //test this
+        body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+        body('comment').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
+    
+        (req, res, next) => {
+    
+            const errors = validationResult(req);
+    
+            let comment = new Comment(
+                {
+                    author: req.body.author,
+                    comment: req.body.comment,
+                    timestamp: new Date(),
+                });
+    
+            if (!errors.isEmpty()) {
+                //fix paths
+                console.log(errors.array());
+                return res.redirect('/api');
+                //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+            }
+    
+            comment.save(err => {
+                if (err) { return next(err); }
+                return res.redirect('/api/comments');
+                //fix this
+            });
+        }
+    ];
+
 export const posts_get = async (req, res) => {
     const post = await Post.find({}).orFail(() => new Error('No Posts found'));
     return res.json(post);
 };
+
+export const posts_post = [
+    body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+    body('title').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
+    body('post').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+    body('published').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+    body('comments').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+
+    async (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        let tempAuth =  await User.findOne({}).orFail(() => new Error('No author found for post'));
+
+        let post = new Post(
+            {
+                author: req.body.author,
+                title: req.body.title,
+                timestamp: new Date(),
+                post: req.body.post,
+                published: req.body.published,
+                comments: [],
+            });
+
+        if (!errors.isEmpty()) {
+            //fix paths
+            console.log(errors.array());
+            return res.redirect('/api');
+            //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+        }
+
+        post.save(err => {
+            if (err) { return next(err); }
+            return res.redirect('/api/posts');
+            //fix this
+        });
+    }
+];
+
+// let PostSchema = new Schema(
+//     {
+//         author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+//         title: { type: String, required: true, maxlength: 30 },
+//         timestamp: { type: Date, required: true },
+//         post: { type: String, required: true, maxlength: 10000 },
+//         published: { type: Boolean },
+//         comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
+//     }
+);
 
 export const users_get = async (req, res) => {
     const user = await User.find({}).orFail(() => new Error('No Users found'));
