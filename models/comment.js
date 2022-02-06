@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 let CommentSchema = new Schema(
     {
-        author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+        // author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+        author: { type: String, required: true },
         comment: { type: String, required: true, minlength: 1, maxlength: 1000 },
         timestamp: { type: Date, required: true },
     }
