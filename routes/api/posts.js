@@ -1,7 +1,7 @@
 import {
     posts_get,
     posts_post
-} from '../../controllers/APIController.js';
+} from '../../controllers/api/posts.js';
 import { Router } from 'express';
 
 const router = Router();

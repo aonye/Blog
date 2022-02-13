@@ -2,109 +2,149 @@ import { body, validationResult } from 'express-validator';
 // const User = require('../models/user');
 // const Message = require('../models/message');
 // const passport = require('../passport');
+import bcrypt from 'bcrypt';
 // const bcrypt = require('bcryptjs');
 // const { DateTime, Settings } = require('luxon');
 //import Comment from '../models/comment.js';
-import Comment from '../models/comment.js';
-import Post from '../models/post.js';
-import User from '../models/user.js';
+import Comment from '../../models/comment.js';
+import Post from '../../models/post.js';
+import User from '../../models/user.js';
+import user from '../../models/user.js';
 
-export const index_get = (req, res) => {
-    res.json('Welcome to Aonye Blog API');
+/* POSTS */
+
+/* USERS */
+export const users_get = async (req, res) => {
+    const user = await User.find({}).orFail(() => new Error('No Users found'));
+    return res.json(user);
 };
 
-export const comments_get = async (req, res) => {
-    const comment = await Comment.find({}).orFail(() => new Error('No Comments found'));
-    return res.json(comment);
-};
-
-export const comments_post = [ //test this
-        body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
-        body('comment').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
-    
-        (req, res, next) => {
-    
-            const errors = validationResult(req);
-    
-            let comment = new Comment(
-                {
-                    author: req.body.author,
-                    comment: req.body.comment,
-                    timestamp: new Date(),
-                });
-    
-            if (!errors.isEmpty()) {
-                //fix paths
-                console.log(errors.array());
-                return res.redirect('/api');
-                //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
-            }
-    
-            comment.save(err => {
-                if (err) { return next(err); }
-                return res.redirect('/api/comments');
-                //fix this
+export const users_post = [
+    body('username').trim()
+        .isEmail().withMessage('Entry is not an email.')
+        .isLength({ min: 1, max: 30 }).withMessage('Entry is too long.')
+        .custom((username) => {
+            return User.findOne({ username }).then((res) => { //check if name is already taken
+                if (res) {
+                    console.log('already taken')
+                    return Promise.reject('Username (email) is already taken.');
+                }
             });
-        }
-    ];
-
-export const posts_get = async (req, res) => {
-    const post = await Post.find({}).orFail(() => new Error('No Posts found'));
-    return res.json(post);
-};
-
-export const posts_post = [
-    body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
-    body('title').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
-    body('post').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
-    body('published').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
-    body('comments').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+        })
+        .escape(),
+    body('password').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars'), //don't escape (mutates pw)
+    body('confirmpw').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars')
+        .custom((confirmpw, { req }) => {
+            if (confirmpw !== req.body.password) {
+                throw new Error('Passwords must match');
+            }
+            return true;
+        }),
 
     async (req, res, next) => {
 
         const errors = validationResult(req);
 
-        let tempAuth =  await User.findOne({}).orFail(() => new Error('No author found for post'));
-
-        let post = new Post(
+        let user = new User(
             {
-                author: req.body.author,
-                title: req.body.title,
-                timestamp: new Date(),
-                post: req.body.post,
-                published: req.body.published,
-                comments: [],
+                username: req.body.username,
+                password: req.body.password,
             });
 
         if (!errors.isEmpty()) {
-            //fix paths
-            console.log(errors.array());
-            return res.redirect('/api');
-            //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+            console.log(errors);
+            //res.render('userpage', { user, errors: errors.array() });
+            res.json({ errors: errors.array() });
+            return;
         }
 
-        post.save(err => {
-            if (err) { return next(err); }
-            return res.redirect('/api/posts');
-            //fix this
+        bcrypt.hash(user.password, 5, (err, hashedPassword) => {
+            if (err) { return next(err) }
+            else { //store hashpw in db, save user
+                user.password = hashedPassword;
+                user.save(err => {
+                    if (err) { return next(err); }
+                    return res.redirect('/api/');
+                });
+            }
         });
     }
 ];
 
-// let PostSchema = new Schema(
-//     {
-//         author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-//         title: { type: String, required: true, maxlength: 30 },
-//         timestamp: { type: Date, required: true },
-//         post: { type: String, required: true, maxlength: 10000 },
-//         published: { type: Boolean },
-//         comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
-//     }
-);
+export const users_put = [
+    body('username').trim()
+        .isLength({ min: 1, max: 30 }).withMessage('Entry is too long.')
+        .isEmail().withMessage('Entry is not an email.')
+        .custom((username, { req }) => {
+            return User.findById(req.params.id).then((user) => { // check if the name is unchanged
+                if (user.username === username) {
+                    console.log('same name')
+                    return Promise.resolve();
+                } else {
+                    return User.findOne({ username }).then((res) => { //check if name is already taken
+                        if (res) {
+                            console.log('already taken')
+                            return Promise.reject('Username (email) is already taken.');
+                        }
+                    });
+                }
+            });
+        })
+        .escape(),
+    body('password').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars'), //don't escape (mutates pw)
+    body('confirmpw').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars')
+        .custom((confirmpw, { req }) => {
+            if (confirmpw !== req.body.password) {
+                throw new Error('Passwords must match');
+            }
+            return true;
+        }),
 
-export const users_get = async (req, res) => {
-    const user = await User.find({}).orFail(() => new Error('No Users found'));
-    return res.json(user);
+    async (req, res, next) => {
+
+        const errors = validationResult(req);
+
+        let user = new User(
+            {
+                username: req.body.username,
+                password: req.body.password,
+                _id: req.params.id,
+            });
+
+        if (!errors.isEmpty()) {
+            // console.log(errors);
+            //res.render('userpage', { user, errors: errors.array() });
+            res.json({ errors: errors.array() });
+            return;
+        }
+
+        //user.username = user.username + 'b';
+        //console.log(user.username);
+
+        const result = await User.findOne({ 'username': req.body.username });
+        if (result) {
+            throw new Error('User already exists');
+        }
+        bcrypt.hash(user.password, 5, (err, hashedPassword) => {
+            if (err) { return next(err) }
+            else { //store hashpw in db, save user
+                user.password = hashedPassword;
+                User.findByIdAndUpdate(req.params.id, user, {}, (err, result) => {
+                    if (err) { return next(err); }
+                    return res.redirect('/api');
+                });
+            }
+        });
+    }
+];
+
+export const users_delete = async (req, res, next) => {
+    User.findByIdAndDelete(req.params.id, (err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/api')
+    });
 };
 
 // Settings.defaultZoneName = "America/New York";

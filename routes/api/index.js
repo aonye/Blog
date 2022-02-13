@@ -1,7 +1,7 @@
 import {
     index_get
 }
-    from '../../controllers/APIController.js';
+    from '../../controllers/api/index.js';
 import posts from './posts.js';
 import comments from './comments.js';
 import users from './users.js';

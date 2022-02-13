@@ -1,11 +1,17 @@
 import {
-    comments_get
+    comments_get,
+    comments_post,
+    comments_delete,
 }
-    from '../../controllers/APIController.js';
+    from '../../controllers/api/comments.js';
 import { Router } from 'express';
 const router = Router();
 
 router.get('/', comments_get);
+
+router.post('/', comments_post);
+
+router.delete('/:id', comments_delete);
 
 // router.post('/', [
 //     body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
@@ -100,12 +106,12 @@ router.get('/', comments_get);
 //     }
 // ];
 
-router.put('/:id', async (req, res) => {
-    res.send('Edit current comment');
-});
+// router.put('/:id', async (req, res) => {
+//     res.send('Edit current comment');
+// });
 
-router.delete('/:id', async (req, res) => {
-    res.send('Delete current comment');
-});
+// router.delete('/:id', async (req, res) => {
+//     res.send('Delete current comment');
+// });
 
 export default router;

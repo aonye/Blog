@@ -1,22 +1,19 @@
 import {
-    users_get
-} from '../../controllers/APIController.js';
+    users_get,
+    users_post,
+    users_put,
+    users_delete,
+} from '../../controllers/api/users.js';
 import { Router } from 'express';
 
 const router = Router();
 
 router.get('/', users_get);
 
-router.post('/', async (req, res) => {
-    res.send('Form submit to create a new user');
-});
+router.post('/', users_post);
 
-router.put('/:id', async (req, res) => {
-    res.send('Form submits to edit a current user');
-});
+router.put('/:id', users_put);
 
-router.delete('/:id', async (req, res) => {
-    res.send('Delete account for current user');
-});
+router.delete('/:id', users_delete);
 
 export default router;
