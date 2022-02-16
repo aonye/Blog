@@ -8,8 +8,9 @@ let PostSchema = new Schema(
         title: { type: String, required: true, maxlength: 30 },
         timestamp: { type: Date, required: true },
         post: { type: String, required: true, maxlength: 10000 },
-        published: { type: Boolean },
-        comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
+        published: { type: Boolean, required: true },
+        comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+        // comments: [{type: String}],
     }
 );
 

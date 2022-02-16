@@ -1,6 +1,8 @@
 import {
     posts_get,
-    posts_post
+    posts_post,
+    posts_put,
+    posts_delete
 } from '../../controllers/api/posts.js';
 import { Router } from 'express';
 
@@ -25,8 +27,6 @@ router.put('/:id', async (req, res) => {
     res.send('Form submits to edit an existing post');
 });
 
-router.delete('/:id', async (req, res) => {
-    res.send('Delete a specific post');
-});
+router.delete('/:id', posts_delete);
 
 export default router;

@@ -48,10 +48,10 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "async": "^3.2.3"
-  },
   "overrides": {
     "mini-css-extract-plugin": "2.4.5"
+  },
+  "devDependencies": {
+    "async": "^3.2.3"
   }
 }
