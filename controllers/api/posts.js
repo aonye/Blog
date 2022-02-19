@@ -65,20 +65,23 @@ export const posts_post = [
 
 export const posts_put = [];
 
-export const posts_delete = async (req, res) => {
+export const posts_delete = async (req, res, next) => {
     // Post.findByIdAndDelete(req.params.id, (err) => {
     //     if (err) {
     //         return err;
     //     };
     //     return res.status(200);
     // })
-    Post.findById(req.params.id)
-        .populate({
-            path: 'comments',
-        })
-        .exec();
-    console.log(post);
-    //find all the comments associated with the post and delete them
+    const post = await Post.findById(req.params.id)
+        .populate('comments');
+    while (post.comments.length > 0) {
+        console.log(post.comments.length);
+        const comment = post.comments.shift();
+        Comment.findByIdAndDelete(comment.id, (err, res) => {
+            if (err) { return next(err); }
+        });
+    }
+    console.log('out here');
     return res.json(post);
     // Comment.findByIdAndRemove(req.params.id, (err) => {
     //     if (err) {
