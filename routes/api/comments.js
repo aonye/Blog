@@ -1,117 +1,116 @@
+import { Router } from 'express';
 import {
-    comments_get,
-    comments_post,
-    comments_delete,
+    post_comments_index_get,
+    comment_get,
+    comment_post,
+    comment_put,
+    comment_delete,
 }
     from '../../controllers/api/comments.js';
-import { Router } from 'express';
-const router = Router();
 
-router.get('/', comments_get);
+const commentRouter = Router({ mergeParams: true });
 
-router.post('/', comments_post);
+commentRouter.get('/', post_comments_index_get);
+// get all comments for a specific post
 
-router.delete('/:id', comments_delete);
+commentRouter.get('/:commentId', comment_get);
+// get specific comment
 
-// router.post('/', [
-//     body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
-//     body('comment').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
+commentRouter.post('/', comment_post);
 
-//     (req, res, next) => {
+commentRouter.put('/:commentId', comment_put);
 
-//         const errors = validationResult(req);
+commentRouter.delete('/:commentId', comment_delete);
 
-//         let comment = new Comment(
-//             {
-//                 author: req.body.author,
-//                 comment: req.body.comment,
-//                 timestamp: new Date(),
-//             });
+// // router.post('/', [
+// //     body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+// //     body('comment').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
 
-//         if (!errors.isEmpty()) {
-//             //fix paths
-//             console.log(errors.array());
-//             return res.redirect('/api');
-//             //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
-//         }
+// //     (req, res, next) => {
 
-//         comment.save(err => {
-//             if (err) { return next(err); }
-//             return res.redirect('/api/comments');
-//             //fix this
-//         });
-//     }
-// ]);
+// //         const errors = validationResult(req);
 
+// //         let comment = new Comment(
+// //             {
+// //                 author: req.body.author,
+// //                 comment: req.body.comment,
+// //                 timestamp: new Date(),
+// //             });
 
+// //         if (!errors.isEmpty()) {
+// //             //fix paths
+// //             console.log(errors.array());
+// //             return res.redirect('/api');
+// //             //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+// //         }
 
-// exports.signup_post = [
-//     body('first_name').trim().isLength({ min: 1, max: 20 }).withMessage('First name is too long').escape(),
-//     body('last_name').trim().isLength({ min: 1, max: 20 }).withMessage('Last name is too long').escape(),
-//     body('username').trim()
-//         .isLength({ min: 1, max: 30 }).withMessage('Entry is too long.')
-//         .isEmail().withMessage('Entry is not an email.')
-//         .custom((username) => {
-//             return User.findOne({ username }).then((productName) => {
-//                 if (productName) {
-//                     return Promise.reject('Username (email) is already taken.');
-//                 }
-//             });
-//         })
-//         .escape(),
-//     body('password').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars'), //don't escape (mutates pw)
-//     body('confirmpw').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars')
-//         .custom((confirmpw, { req }) => {
-//             if (confirmpw !== req.body.password) {
-//                 throw new Error('Passwords must match');
-//             }
-//             return true;
-//         }),
-//     body('membership').trim(),
-//     body('admin_status').trim().isBoolean({ loose: true }),
+// //         comment.save(err => {
+// //             if (err) { return next(err); }
+// //             return res.redirect('/api/comments');
+// //             //fix this
+// //         });
+// //     }
+// // ]);
 
-//     (req, res, next) => {
+// // exports.signup_post = [
+// //     body('first_name').trim().isLength({ min: 1, max: 20 }).withMessage('First name is too long').escape(),
+// //     body('last_name').trim().isLength({ min: 1, max: 20 }).withMessage('Last name is too long').escape(),
+// //     body('username').trim()
+// //         .isLength({ min: 1, max: 30 }).withMessage('Entry is too long.')
+// //         .isEmail().withMessage('Entry is not an email.')
+// //         .custom((username) => {
+// //             return User.findOne({ username }).then((productName) => {
+// //                 if (productName) {
+// //                     return Promise.reject('Username (email) is already taken.');
+// //                 }
+// //             });
+// //         })
+// //         .escape(),
+// //     body('password').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars'), //don't escape (mutates pw)
+// //     body('confirmpw').trim().isLength({ min: 6, max: 30 }).withMessage('Password must be between 6 and 30 chars')
+// //         .custom((confirmpw, { req }) => {
+// //             if (confirmpw !== req.body.password) {
+// //                 throw new Error('Passwords must match');
+// //             }
+// //             return true;
+// //         }),
+// //     body('membership').trim(),
+// //     body('admin_status').trim().isBoolean({ loose: true }),
 
-//         const errors = validationResult(req);
+// //     (req, res, next) => {
 
-//         let user = new User(
-//             {
-//                 first_name: req.body.first_name,
-//                 last_name: req.body.last_name,
-//                 username: req.body.username,
-//                 password: req.body.password,
-//             });
+// //         const errors = validationResult(req);
 
-//         user.membership_status = req.body.membership === process.env.SECRET ? true : false;
-//         user.admin_status = req.body.admin_status === 'True' ? true : false;
+// //         let user = new User(
+// //             {
+// //                 first_name: req.body.first_name,
+// //                 last_name: req.body.last_name,
+// //                 username: req.body.username,
+// //                 password: req.body.password,
+// //             });
 
-//         if (!errors.isEmpty()) {
-//             res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
-//             return;
-//         }
+// //         user.membership_status = req.body.membership === process.env.SECRET ? true : false;
+// //         user.admin_status = req.body.admin_status === 'True' ? true : false;
 
-//         bcrypt.hash(user.password, 5, (err, hashedPassword) => {
-//             if (err) { return next(err) }
-//             else { //store hashpw in db, save user
-//                 user.password = hashedPassword;
-//                 user.save(err => {
-//                     if (err) { return next(err); }
-//                     req.login(user, function (err) {
-//                         if (err) { return next(err); }
-//                         return res.redirect('/messageboard');
-//                     });
-//                 });
-//             }
-//         });
-//     }
-// ];
+// //         if (!errors.isEmpty()) {
+// //             res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+// //             return;
+// //         }
 
-// router.put('/:id', async (req, res) => {
-//     res.send('Edit current comment');
-// });
+// //         bcrypt.hash(user.password, 5, (err, hashedPassword) => {
+// //             if (err) { return next(err) }
+// //             else { //store hashpw in db, save user
+// //                 user.password = hashedPassword;
+// //                 user.save(err => {
+// //                     if (err) { return next(err); }
+// //                     req.login(user, function (err) {
+// //                         if (err) { return next(err); }
+// //                         return res.redirect('/messageboard');
+// //                     });
+// //                 });
+// //             }
+// //         });
+// //     }
+// // ];
 
-// router.delete('/:id', async (req, res) => {
-//     res.send('Delete current comment');
-// });
-
-export default router;
+export default commentRouter;

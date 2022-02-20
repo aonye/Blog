@@ -1,19 +1,19 @@
+import { Router } from 'express';
 import {
     users_get,
     users_post,
     users_put,
     users_delete,
 } from '../../controllers/api/users.js';
-import { Router } from 'express';
 
-const router = Router();
+const userRouter = Router();
 
-router.get('/', users_get);
+userRouter.get('/', users_get);
 
-router.post('/', users_post);
+userRouter.post('/', users_post);
 
-router.put('/:id', users_put);
+userRouter.put('/:id', users_put);
 
-router.delete('/:id', users_delete);
+userRouter.delete('/:id', users_delete);
 
-export default router;
+export default userRouter;

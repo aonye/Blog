@@ -2,10 +2,9 @@ import { body, validationResult } from 'express-validator';
 import User from '../../models/user.js';
 import Post from '../../models/post.js';
 import Comment from '../../models/comment.js';
-import post from '../../models/post.js';
+import comment from '../../models/comment.js';
 
 // TEST VARS, MODELS, COMMENTS
-
 const authorSample = new User({
     username: 'test username',
     password: 'test password'
@@ -22,43 +21,46 @@ const commentSample = new Comment({
     timestamp: new Date(),
 });
 
-export const posts_get = async (req, res) => {
-    const post = await Post.find({}).orFail(() => new Error('No Posts found'));
-    return res.json(post);
+export const posts_index_get = async (req, res) => { // only return true
+    const post = await Post.find({ published: 'true' });
+    return post === null
+        ? res.status(400).json({ error: 'Cannot find posts' })
+        : post.length === 0
+            ? res.status(404).json({ error: 'No posts found' })
+            : res.json(post);
 };
 
-export const posts_post = [
-    //body('author').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
+export const post_get = async (req, res) => {
+    const post = await Post.findById(req.params.postId);
+    return post ? res.json(post) : res.status(404).json({ error: 'Post not found' });
+};
+
+export const post_post = [
     body('title').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
     body('post').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
     body('published').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
-    //body('comments').trim().isLength({ min: 1, max: 20 }).withMessage('Author is too long').escape(),
 
-    async (req, res, next) => {
+    async (req, res) => {
 
         const errors = validationResult(req);
 
-        let post = new Post(
-            {
-                author: authorSample,
-                title: req.body.title,
-                timestamp: new Date(),
-                post: req.body.post,
-                published: req.body.published === 'true' ? true : false,
-                comments: commentSample,
-            });
+        const post = new Post({
+            author: authorSample,
+            title: req.body.title,
+            timestamp: new Date(),
+            post: req.body.post,
+            published: req.body.published === 'true' ? true : false,
+            comments: commentSample,
+        });
 
         if (!errors.isEmpty()) {
-            //fix paths
-            console.log(errors.array());
-            return res.redirect('/api');
-            //res.render('signup', { user, admin_result: req.body.admin_status, errors: errors.array() });
+            return res.status(404).json(errors.array());
         }
 
-        post.save(err => {
-            if (err) { return next(err); }
-            return res.status(200).json('Successfully posted');
-            //fix this
+        commentSample.save();
+        post.save((err) => {
+            if (err) { return res.status(400).json({ error: 'Error saving post' }); }
+            return res.status(200).json({ msg: 'Post successfully saved' });
         });
     }
 ];
@@ -72,8 +74,8 @@ export const posts_delete = async (req, res, next) => {
     //     };
     //     return res.status(200);
     // })
-    const post = await Post.findById(req.params.id)
-        .populate('comments');
+    const post = await Post.findByIdAndDelete(req.params.postId);
+    return post ? res.json('successfully deleted') : res.status(400).json('sdffd');
     while (post.comments.length > 0) {
         console.log(post.comments.length);
         const comment = post.comments.shift();

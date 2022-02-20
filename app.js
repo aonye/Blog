@@ -33,11 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // });
 
 app.use('/login', login);
-app.use('/api', APIRouter.index);
-app.use('/api/users', APIRouter.users);
-app.use('/api/comments', APIRouter.comments);
-app.use('/api/posts', APIRouter.posts);
-app.use('/api/login', APIRouter.login);
+app.use('/api', APIRouter);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server started at Port: ${process.env.PORT}`);

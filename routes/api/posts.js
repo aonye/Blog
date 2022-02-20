@@ -1,32 +1,26 @@
-import {
-    posts_get,
-    posts_post,
-    posts_put,
-    posts_delete
-} from '../../controllers/api/posts.js';
 import { Router } from 'express';
+import {
+    posts_index_get,
+    post_get,
+    post_post,
+    posts_put,
+    posts_delete,
+} from '../../controllers/api/posts.js';
+import commentRouter from './comments.js';
 
-const router = Router();
+const postRouter = Router();
+postRouter.use('/:postId/comments', commentRouter);
 
-router.get('/', posts_get);
+postRouter.get('/', posts_index_get);
 
-router.post('/', posts_post);
+postRouter.get('/:postId', post_get);
 
-// let PostSchema = new Schema(
-//     {
-//         author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-//         title: { type: String, required: true, maxlength: 30 },
-//         timestamp: { type: Date, required: true },
-//         post: { type: String, required: true, maxlength: 10000 },
-//         published: { type: Boolean },
-//         comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
-//     }
-// );
+postRouter.post('/', post_post);
 
-router.put('/:id', async (req, res) => {
+postRouter.put('/:postId', async (req, res) => {
     res.send('Form submits to edit an existing post');
 });
 
-router.delete('/:id', posts_delete);
+postRouter.delete('/:postId', posts_delete);
 
-export default router;
+export default postRouter;

@@ -1,18 +1,21 @@
+import { Router } from 'express';
 import {
     index_get
 }
     from '../../controllers/api/index.js';
-import posts from './posts.js';
-import comments from './comments.js';
-import users from './users.js';
-import login from '../app/login.js'
-import { Router } from 'express';
+import postRouter from './posts.js';
+import userRouter from './users.js';
 
-const router = Router();
+const APIRouter = Router();
 
-router.get('/', index_get);
+APIRouter.use('/users', userRouter);
+APIRouter.use('/posts', postRouter);
 
-// app.post('/api/posts', verifyToken, (req, res) => {  
+APIRouter.get('/', index_get);
+
+export default APIRouter;
+
+// app.post('/api/posts', verifyToken, (req, res) => {
 //     jwt.verify(req.token, 'secretkey', (err, authData) => {
 //       if(err) {
 //         res.sendStatus(403);
@@ -63,13 +66,3 @@ router.get('/', index_get);
 //     }
 
 //   }
-
-const routes = {
-    index: router,
-    posts,
-    comments,
-    users,
-    login,
-};
-
-export default routes;
