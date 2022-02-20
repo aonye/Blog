@@ -1,19 +1,22 @@
 import { Router } from 'express';
 import {
-    users_get,
-    users_post,
-    users_put,
-    users_delete,
+    users_index_get,
+    user_get,
+    user_post,
+    user_put,
+    user_delete,
 } from '../../controllers/api/users.js';
 
 const userRouter = Router();
 
-userRouter.get('/', users_get);
+userRouter.get('/secret', users_index_get);
 
-userRouter.post('/', users_post);
+userRouter.get('/:userId', user_get);
 
-userRouter.put('/:id', users_put);
+userRouter.post('/', user_post);
 
-userRouter.delete('/:id', users_delete);
+userRouter.put('/:userId', user_put);
+
+userRouter.delete('/:userId', user_delete);
 
 export default userRouter;

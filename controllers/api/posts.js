@@ -21,7 +21,7 @@ const commentSample = new Comment({
     timestamp: new Date(),
 });
 
-export const posts_index_get = async (req, res) => { // only return true
+export const posts_index_get = async (req, res) => { // only return published posts
     const post = await Post.find({ published: 'true' });
     return post === null
         ? res.status(400).json({ error: 'Cannot find posts' })
@@ -44,53 +44,69 @@ export const post_post = [
 
         const errors = validationResult(req);
 
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors.array());
+        }
+        //get user from cookies here, comments should be empty for new post
         const post = new Post({
             author: authorSample,
             title: req.body.title,
             timestamp: new Date(),
             post: req.body.post,
             published: req.body.published === 'true' ? true : false,
-            comments: commentSample,
+            comments: [],
         });
 
-        if (!errors.isEmpty()) {
-            return res.status(404).json(errors.array());
-        }
-
-        commentSample.save();
         post.save((err) => {
-            if (err) { return res.status(400).json({ error: 'Error saving post' }); }
+            if (err) {
+                return res.status(400).json({ error: 'Error saving post' });
+            }
             return res.status(200).json({ msg: 'Post successfully saved' });
         });
     }
 ];
 
-export const posts_put = [];
+export const post_put = [
+    body('title').trim().isLength({ min: 1, max: 100 }).withMessage('Comment is too long').escape(),
+    body('post').trim().isLength({ min: 1, max: 2000 }).withMessage('Author is too long').escape(),
+    body('published').trim().isLength({ min: 4, max: 5 }).withMessage('Publish is too long').escape(),
 
-export const posts_delete = async (req, res, next) => {
-    // Post.findByIdAndDelete(req.params.id, (err) => {
-    //     if (err) {
-    //         return err;
-    //     };
-    //     return res.status(200);
-    // })
-    const post = await Post.findByIdAndDelete(req.params.postId);
-    return post ? res.json('successfully deleted') : res.status(400).json('sdffd');
-    while (post.comments.length > 0) {
-        console.log(post.comments.length);
-        const comment = post.comments.shift();
-        Comment.findByIdAndDelete(comment.id, (err, res) => {
-            if (err) { return next(err); }
-        });
+    async (req, res) => {
+
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors.array());
+        }
+
+        const post = await Post.findById(req.params.id);
+        if (post) {//check if logged in user (cookies) matches the post author
+            post.save((err) => {
+                if (err) {
+                    return res.status(400).json({ error: 'Error updating post' });
+                }
+                return res.status(200).json({ msg: 'Post successfully updated' });
+            });
+        } else {
+            return res.status(404).json({ error: 'Post not found' });
+        }
     }
-    console.log('out here');
-    return res.json(post);
-    // Comment.findByIdAndRemove(req.params.id, (err) => {
-    //     if (err) {
-    //         return res.status(500).json({ msg: 'error' });
-    //     }
-    //     return res.status(200).json({ msg: 'deleted' });
-    // });
-    // const post = await Post.find({}).orFail(() => new Error('No Posts found'));
-    // return res.json(post);
+];
+
+export const post_delete = async (req, res, next) => {
+    const post = await Post.findById(req.params.postId).populate('comments');
+    if (post) {
+        while (post.comments.length > 0) {
+            const comment = post.comments.pop();
+            Comment.findByIdAndDelete(comment.id, (err, res) => {
+                if (err) {
+                    return res.status(404).json({ error: 'Error removing post comment' });
+                }
+            });
+        }
+        return post.remove({ id: req.params.postId })
+            ? res.status(200).json({ msg: 'Post successfully deleted' })
+            : res.status(404).json({ error: 'Error removing post' });
+    }
+    return res.status(404).json({ error: 'Post not found' });
 };

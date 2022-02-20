@@ -3,8 +3,8 @@ import {
     posts_index_get,
     post_get,
     post_post,
-    posts_put,
-    posts_delete,
+    post_put,
+    post_delete,
 } from '../../controllers/api/posts.js';
 import commentRouter from './comments.js';
 
@@ -17,10 +17,8 @@ postRouter.get('/:postId', post_get);
 
 postRouter.post('/', post_post);
 
-postRouter.put('/:postId', async (req, res) => {
-    res.send('Form submits to edit an existing post');
-});
+postRouter.put('/:postId', post_put);
 
-postRouter.delete('/:postId', posts_delete);
+postRouter.delete('/:postId', post_delete);
 
 export default postRouter;
