@@ -83,7 +83,7 @@ export const comment_delete = async (req, res) => {
     const post = await Post.findById(req.params.postId).populate('comments');
     if (comment && post) {
         const index = post.comments.map((item) => item.id).indexOf(comment.id);
-        post.comments = post.comments.slice(0, index).concat(post.comments.slice(index + 1, post.comments.length));
+        post.comments = post.comments.slice(0, index).concat(post.comments.slice(index + 1));
         post.save((err) => {
             if (err) {
                 return res.status(400).json({ error: 'Error saving post' });
