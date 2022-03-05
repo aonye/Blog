@@ -1,0 +1,47 @@
+.App {
+  height: 70vh;
+  width: 100%;
+  background-color: sandybrown;
+}
+
+.nav-box {
+  display: block;
+  min-height: 30px;
+  height: 50px;
+}
+
+.test {
+  position: relative;
+}
+
+.post-container {
+  position: relative;
+  height: 300px;
+  width: 600px;
+  background-color: aquamarine;
+  display: block;
+  flex-direction: column;
+  margin: auto;
+
+  &__information {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: purple;
+    height: 60px;
+    max-width: 150px;
+
+    &__wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__cmt-btn-cont {
+    position: absolute;
+    bottom: 0px;
+    background-color: purple;
+    height: 40px;
+    width: 100%;
+  }
+}
