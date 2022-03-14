@@ -1,3 +1,5 @@
+// Global styles
+
 .App {
   height: 70vh;
   width: 100%;
@@ -14,7 +16,12 @@
   position: relative;
 }
 
-.post-container {
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.post {
   position: relative;
   height: 300px;
   width: 600px;
@@ -23,7 +30,7 @@
   flex-direction: column;
   margin: auto;
 
-  &__information {
+  &__info {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
