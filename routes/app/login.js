@@ -3,7 +3,7 @@ import { Router } from 'express';
 const router = Router();
 
 router.get('/', async (req, res) => {
-    res.json('login');
+	res.json('login');
 });
 
 // router.post('/', async (req, res) => {

@@ -2,13 +2,11 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-let CommentSchema = new Schema(
-    {
-        author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
-        text: { type: String, required: true, minlength: 1, maxlength: 1000 },
-        timestamp: { type: Date, required: true },
-    }
-);
+const CommentSchema = new Schema({
+	author: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+	text: { type: String, required: true, minlength: 1, maxlength: 1000 },
+	timestamp: { type: Date, required: true },
+});
 
 // Schema
 //     .virtual('url')

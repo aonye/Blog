@@ -1,6 +1,6 @@
 import GithubLogo from '../assets/images/GitHub-64px.png';
 
-const Github = (props) => {
+const Footer = (props) => {
 	const addSpin = (event) => {
 		event.target.classList.remove('backSpin');
 		event.target.classList.add('spin');
@@ -24,4 +24,4 @@ const Github = (props) => {
 	);
 };
 
-export default Github;
+export default Footer;

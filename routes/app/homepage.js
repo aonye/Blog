@@ -3,7 +3,7 @@ import { Router } from 'express';
 const router = Router();
 
 router.get('/', (req, res) => {
-    return res.send('message');
+	return res.send('message');
 });
 
 // router.get('/:messageId', (req, res) => {

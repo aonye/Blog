@@ -2,12 +2,10 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-let UserSchema = new Schema(
-    {
-        username: { type: String, required: true }, //set min and max length for email/pw later
-        password: { type: String, required: true },
-    }
-);
+const UserSchema = new Schema({
+	username: { type: String, required: true }, // set min and max length for email/pw later
+	password: { type: String, required: true },
+});
 
 // MessageSchema
 //     .virtual('url')

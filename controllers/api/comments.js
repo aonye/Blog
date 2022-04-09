@@ -3,91 +3,109 @@ import Comment from '../../models/comment.js';
 import Post from '../../models/post.js';
 import User from '../../models/user.js';
 
-//Test
+// Test
 const mockAuthor = new User({
-    username: 'test comment -- username',
-    password: 'test comment -- password'
+	username: 'test comment -- username',
+	password: 'test comment -- password',
 });
 
 export const post_comments_index_get = async (req, res) => {
-    const post = await Post.findById(req.params.postId)
-        .populate('comments')
-    return post ? res.json(post.comments) : res.status(404).json({ error: 'Post not found' });
+	const post = await Post.findById(req.params.postId).populate('comments');
+	return post
+		? res.json(post.comments)
+		: res.status(404).json({ error: 'Post not found' });
 };
 
 export const comment_get = async (req, res) => {
-    const comment = await Comment.findById(req.params.commentId);
-    return comment ? res.json(comment) : res.status(404).json({ error: 'Comment not found' });
+	const comment = await Comment.findById(req.params.commentId);
+	return comment
+		? res.json(comment)
+		: res.status(404).json({ error: 'Comment not found' });
 };
 
 export const comment_post = [
-    body('text').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
+	body('text')
+		.trim()
+		.isLength({ min: 1, max: 200 })
+		.withMessage('Comment is too long')
+		.escape(),
 
-    async (req, res) => {
+	async (req, res) => {
+		const errors = validationResult(req);
 
-        const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json(errors.array());
+		}
 
-        if (!errors.isEmpty()) {
-            return res.status(400).json(errors.array());
-        }
+		// in real scenario, get user from cookies
 
-        //in real scenario, get user from cookies
+		const comment = new Comment({
+			author: mockAuthor,
+			text: req.body.text,
+			timestamp: new Date(),
+		});
 
-        const comment = new Comment({
-            author: mockAuthor,
-            text: req.body.text,
-            timestamp: new Date(),
-        });
-
-        const post = await Post.findById(req.params.postId).populate('comments');
-        if (post) {
-            const commentSaveResult = await comment.save();
-            if (commentSaveResult) {
-                post.comments.push(comment);
-                return post.save()
-                    ? res.status(200).json({ msg: 'Success. Comment saved to post' })
-                    : res.status(400).json({ error: 'Error saving comment to post' });
-            }
-            return res.status(400).json({ error: 'Error saving comment' });
-        }
-        return res.status(404).json({ error: 'Error finding post' });
-    }
+		const post = await Post.findById(req.params.postId).populate(
+			'comments',
+		);
+		if (post) {
+			const commentSaveResult = await comment.save();
+			if (commentSaveResult) {
+				post.comments.push(comment);
+				return post.save()
+					? res
+							.status(200)
+							.json({ msg: 'Success. Comment saved to post' })
+					: res
+							.status(400)
+							.json({ error: 'Error saving comment to post' });
+			}
+			return res.status(400).json({ error: 'Error saving comment' });
+		}
+		return res.status(404).json({ error: 'Error finding post' });
+	},
 ];
 
-export const comment_put = [ //test this
-    body('text').trim().isLength({ min: 1, max: 200 }).withMessage('Comment is too long').escape(),
+export const comment_put = [
+	// test this
+	body('text')
+		.trim()
+		.isLength({ min: 1, max: 200 })
+		.withMessage('Comment is too long')
+		.escape(),
 
-    async (req, res) => {
+	async (req, res) => {
+		const errors = validationResult(req);
 
-        const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json(errors.array());
+		}
 
-        if (!errors.isEmpty()) {
-            return res.status(400).json(errors.array());
-        }
+		// validation check - author id of comment matches the user id
 
-        //validation check - author id of comment matches the user id
-
-        const comment = await Comment.findById(req.params.commentId);
-        if (comment) {
-            comment.text = req.body.text;
-            return comment.save()
-                ? res.status(200).json({ msg: 'Success. Comment updated' })
-                : res.status(400).json({ error: 'Error updating comment' });
-        }
-        return res.status(404).json({ error: 'Comment not found' });
-    }
+		const comment = await Comment.findById(req.params.commentId);
+		if (comment) {
+			comment.text = req.body.text;
+			return comment.save()
+				? res.status(200).json({ msg: 'Success. Comment updated' })
+				: res.status(400).json({ error: 'Error updating comment' });
+		}
+		return res.status(404).json({ error: 'Comment not found' });
+	},
 ];
 
 export const comment_delete = async (req, res) => {
-    const comment = await Comment.findById(req.params.commentId);
-    const post = await Post.findById(req.params.postId).populate('comments');
-    if (comment && post) {
-        const result = await comment.remove({ id: comment.id });
-        const index = post.comments.map((item) => item.id).indexOf(comment.id);
-        post.comments = post.comments.slice(0, index).concat(post.comments.slice(index + 1));
-        return post.save() && result
-            ? res.status(200).json({ msg: 'Comment deleted. Post updated' })
-            : res.status(400).json({ error: 'Error saving post' });
-    }
-    return res.status(404).json({ error: 'Comment, Post not found' });
+	const comment = await Comment.findById(req.params.commentId);
+	const post = await Post.findById(req.params.postId).populate('comments');
+	if (comment && post) {
+		const result = await comment.remove({ id: comment.id });
+		const index = post.comments.map((item) => item.id).indexOf(comment.id);
+		post.comments = post.comments
+			.slice(0, index)
+			.concat(post.comments.slice(index + 1));
+		return post.save() && result
+			? res.status(200).json({ msg: 'Comment deleted. Post updated' })
+			: res.status(400).json({ error: 'Error saving post' });
+	}
+	return res.status(404).json({ error: 'Comment, Post not found' });
 };
