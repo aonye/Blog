@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import moment from 'moment';
 import './App.scss';
 
 import Nav from './components/Nav.jsx';
 import Login from './components/Login';
 import Main from './components/Main.jsx';
-import acctIcon from './acct-icon.png';
+import Post from './components/Post.jsx';
 
 function App() {
 	const [posts, setPosts] = useState();
@@ -125,52 +124,6 @@ function App() {
 	// 		);
 	// }
 
-	const Post = (props) => {
-		// eslint-disable-next-line react/prop-types
-		const { author, title, post, timestamp } = props;
-		// eslint-disable-next-line react/prop-types
-		const username = author.username;
-		// eslint-disable-next-line react/prop-types
-		const date = moment(timestamp).format('MM-DD-YYYY');
-		console.log(date, timestamp);
-		return (
-			<div className="post">
-				<div className="post__info">
-					<div className="post__info__wrapper">
-						<img
-							src={acctIcon}
-							alt="acct-icon"
-							width="50px"
-							height="50px"
-						></img>
-						<div className="flex-col">
-							<span>{username}</span>
-							<span>{date}</span>
-						</div>
-					</div>
-					<div className="post__info__title">{title}</div>
-				</div>
-				{/* <p>
-					Lorem Ipsum is simply dummy text of the printing and
-					typesetting industry. Lorem Ipsum has been the
-					industry&apos;s standard dummy text ever since the 1500s,
-					when an unknown printer took a galley of type and scrambled
-					it to make a type specimen book. It has survived not only
-					five centuries, but also the leap into electronic
-					typesetting, remaining essentially unchanged. It was
-					popularised in the 1960s with the release of Letraset sheets
-					containing Lorem Ipsum passages, and more recently with
-					desktop publishing software like Aldus PageMaker including
-					versions of Lorem Ipsum.
-				</p> */}
-				<p>{post}</p>
-				<div className="cmt-btn">
-					<button className="">Comment</button>
-				</div>
-			</div>
-		);
-	};
-
 	return (
 		<>
 			<Nav />
@@ -193,7 +146,7 @@ function App() {
 			{posts
 				? posts.map((i, index) => {
 						console.log(i);
-						return <div key={index}>{Post(i)}</div>;
+						return <div key={index}>{<Post {...i} />}</div>;
 				  })
 				: null}
 		</>
