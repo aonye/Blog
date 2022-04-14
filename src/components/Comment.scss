@@ -1,0 +1,28 @@
+.comment {
+	margin: 2.5px 0px 2.5px 0px;
+	&__info {
+		background-color: green;
+		width: 100%;
+		text-overflow: ellipsis;
+		height: 50px;
+		.wrapper {
+			background-color: magenta;
+			display: flex;
+			flex-direction: row;
+			width: 200px;
+			padding-left: 10px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+
+			span {
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+		}
+	}
+
+	&__text {
+		background-color: skyblue;
+		display: block;
+	}
+}

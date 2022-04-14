@@ -1,8 +1,6 @@
+/* eslint-disable camelcase */
 import { Router } from 'express';
-import {
-    index_get
-}
-    from '../../controllers/api/index.js';
+import { index_get } from '../../controllers/api/index.js';
 import postRouter from './posts.js';
 import userRouter from './users.js';
 
@@ -31,7 +29,7 @@ export default APIRouter;
 //   app.post('/api/login', (req, res) => {
 //     // Mock user
 //     const user = {
-//       id: 1, 
+//       id: 1,
 //       username: 'brad',
 //       email: 'brad@gmail.com'
 //     }

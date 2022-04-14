@@ -1,13 +1,20 @@
+/* eslint-disable camelcase */
 import { body, validationResult } from 'express-validator';
 import User from '../../models/user.js';
 import Post from '../../models/post.js';
 import Comment from '../../models/comment.js';
-import comment from '../../models/comment.js';
+// import comment from '../../models/comment.js';
 
 // TEST VARS, MODELS, COMMENTS
 const authorSample = new User({
 	username: 'test username',
 	password: 'test password',
+});
+
+const authorSample2 = new User({
+	_id: '6212a780919c075099493009',
+	username: 'elonmusk@tesla.com',
+	password: 'tesla',
 });
 
 const commentAuthor = new User({
@@ -25,7 +32,14 @@ export const posts_index_get = async (req, res) => {
 	// only return published posts
 	const post = await Post.find({ published: 'true' })
 		.populate('author')
-		.populate('comments');
+		.populate({
+			path: 'comments',
+			populate: {
+				path: 'author',
+				model: 'User',
+			},
+		})
+		.populate();
 	console.log(post);
 	return post === null
 		? res.status(400).json({ error: 'Cannot find posts' })
@@ -66,7 +80,7 @@ export const post_post = [
 		}
 		// get user from cookies here, comments should be empty for new post
 		const post = new Post({
-			author: authorSample,
+			author: authorSample2,
 			title: req.body.title,
 			timestamp: new Date(),
 			post: req.body.post,

@@ -9,6 +9,12 @@ const mockAuthor = new User({
 	password: 'test comment -- password',
 });
 
+const mockAuthor2 = new User({
+	_id: '6212a780919c075099493009',
+	username: 'elonmusk@tesla.com',
+	password: 'tesla',
+});
+
 export const post_comments_index_get = async (req, res) => {
 	const post = await Post.findById(req.params.postId).populate('comments');
 	return post
@@ -40,7 +46,7 @@ export const comment_post = [
 		// in real scenario, get user from cookies
 
 		const comment = new Comment({
-			author: mockAuthor,
+			author: mockAuthor2,
 			text: req.body.text,
 			timestamp: new Date(),
 		});

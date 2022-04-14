@@ -1,10 +1,11 @@
+/* eslint-disable camelcase */
 import { Router } from 'express';
 import {
-    posts_index_get,
-    post_get,
-    post_post,
-    post_put,
-    post_delete,
+	posts_index_get,
+	post_get,
+	post_post,
+	post_put,
+	post_delete,
 } from '../../controllers/api/posts.js';
 import commentRouter from './comments.js';
 

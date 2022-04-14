@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 import './App.scss';
 
 import Nav from './components/Nav.jsx';
@@ -9,6 +11,7 @@ import Post from './components/Post.jsx';
 
 function App() {
 	const [posts, setPosts] = useState();
+	const [id, setID] = useState(null);
 	function clearCookies() {
 		console.lg('xd');
 	}
@@ -17,17 +20,15 @@ function App() {
 		console.log(document.cookie);
 	}
 
-	console.log(posts, setPosts, 'check');
-
 	useEffect(async () => {
-		const p = await getPosts();
-		setPosts(p);
+		refreshPosts();
 	}, []);
 
 	async function getPosts() {
 		// e.preventDefault();
 		const cookie = document.cookie;
 		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
+		setIDFromToken(token);
 		try {
 			const res = await fetch('http://localhost:8000/api/posts', {
 				method: 'GET',
@@ -47,6 +48,18 @@ function App() {
 		} catch (err) {
 			console.log(err);
 		}
+	}
+
+	async function setIDFromToken(token = null) {
+		if (token) {
+			const id = jwtDecode(token).id;
+			setID(id);
+		}
+	}
+
+	async function refreshPosts() {
+		const posts = await getPosts();
+		setPosts(posts);
 	}
 
 	// async function createPosts() {
@@ -130,11 +143,15 @@ function App() {
 			<BrowserRouter>
 				<Switch>
 					<Route exact path="/">
-						<Main />
+						<Main
+							posts={posts}
+							userID={id}
+							refreshPosts={refreshPosts}
+						/>
 					</Route>
 					<Route exact path="/test"></Route>
 					<Route exact path="/login">
-						<Login />
+						<Login setID={setID} />
 					</Route>
 				</Switch>
 			</BrowserRouter>
@@ -143,12 +160,18 @@ function App() {
 				Show cookie in console
 			</button>
 			<button onClick={(e) => getPosts(e)}>get posts</button>
-			{posts
-				? posts.map((i, index) => {
-						console.log(i);
-						return <div key={index}>{<Post {...i} />}</div>;
-				  })
-				: null}
+			<button onClick={() => console.log(id)}>Get Token</button>
+			{/* <div>
+				{posts
+					? posts.map((i, index) => {
+							return (
+								<div key={index}>
+									{<Post {...i} userID={id} />}
+								</div>
+							);
+					  })
+					: null}
+			</div> */}
 		</>
 	);
 }

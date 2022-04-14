@@ -1,15 +1,10 @@
 import GithubLogo from '../assets/images/GitHub-64px.png';
 
 const Footer = (props) => {
-	const addSpin = (event) => {
-		event.target.classList.remove('backSpin');
-		event.target.classList.add('spin');
-	};
 
-	const removeSpin = (event) => {
-		event.target.classList.remove('spin');
-		event.target.classList.add('backSpin');
-	};
+	function getAllPosts() {
+		
+	}
 
 	return (
 		<a href="https://github.com/aonye">

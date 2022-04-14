@@ -1,8 +1,10 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 
-const Login = () => {
+const Login = ({ setID }) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [msg, setMsg] = useState('');
@@ -25,13 +27,15 @@ const Login = () => {
 				}),
 			});
 			const resJson = await res.json();
-			console.log(resJson.token);
+			console.log(resJson.token, 'token');
 			if (res.status === 200) {
 				setUsername('');
 				setPassword('');
 				setMsg('User created successfully');
 				document.cookie = `token=${resJson.token}; SameSite=None; Secure`;
-				console.log(document.cookie);
+				const id = jwtDecode(resJson.token).id;
+				console.log(id, 'info');
+				setID(id);
 				setTimeout(() => {
 					history.push('/');
 				}, 5000);

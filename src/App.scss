@@ -1,5 +1,13 @@
 // Global styles
 
+.flex-col {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
 .App {
 }
 
@@ -8,61 +16,6 @@
 	min-height: 80px;
 	height: 100px;
 	border-bottom: 1px solid black;
-}
-
-.post {
-	position: relative;
-	height: 300px;
-	width: 600px;
-	background-color: aquamarine;
-	display: block;
-	flex-direction: column;
-	margin: auto;
-	margin-top: 10px;
-
-	&__info {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		height: 60px;
-		max-width: 100%;
-		background-color: purple;
-
-		&__wrapper {
-			display: flex;
-			flex-direction: row;
-			justify-content: space-around;
-			max-width: 150px;
-			width: 80%;
-
-			background-color: green;
-
-			.flex-col {
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				white-space: nowrap;
-				overflow: hidden;
-			}
-
-			.flex-col span {
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
-
-		&__title {
-			margin-left: 10px;
-		}
-	}
-
-	.cmt-btn {
-		position: absolute;
-		bottom: 0px;
-		background-color: purple;
-		height: 40px;
-		width: 100%;
-	}
 }
 
 .spin {

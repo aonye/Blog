@@ -1,10 +1,11 @@
+/* eslint-disable camelcase */
 import { Router } from 'express';
 import {
-    users_index_get,
-    user_get,
-    user_post,
-    user_put,
-    user_delete,
+	users_index_get,
+	user_get,
+	user_post,
+	user_put,
+	user_delete,
 } from '../../controllers/api/users.js';
 
 const userRouter = Router();

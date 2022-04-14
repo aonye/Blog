@@ -1,12 +1,12 @@
+/* eslint-disable camelcase */
 import { Router } from 'express';
 import {
-    post_comments_index_get,
-    comment_get,
-    comment_post,
-    comment_put,
-    comment_delete,
-}
-    from '../../controllers/api/comments.js';
+	post_comments_index_get,
+	comment_get,
+	comment_post,
+	comment_put,
+	comment_delete,
+} from '../../controllers/api/comments.js';
 
 const commentRouter = Router({ mergeParams: true });
 
