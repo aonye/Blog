@@ -1,12 +1,11 @@
 .comment {
-	margin: 2.5px 0px 2.5px 0px;
+	margin: 10px 0px 10px 0px;
+	background-color: #0084FF;
 	&__info {
-		background-color: green;
 		width: 100%;
 		text-overflow: ellipsis;
 		height: 50px;
 		.wrapper {
-			background-color: magenta;
 			display: flex;
 			flex-direction: row;
 			width: 200px;
@@ -21,8 +20,7 @@
 		}
 	}
 
-	&__text {
-		background-color: skyblue;
-		display: block;
+	p {
+		padding-bottom: 10px;
 	}
 }

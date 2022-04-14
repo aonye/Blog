@@ -3,10 +3,6 @@
     text-decoration: underline;
 }
 
-.deleteLink:hover {
-    cursor: pointer;
-}
-
 .post {
     position: relative;
     min-height: 100px;
@@ -46,6 +42,13 @@
         &__title {
             margin-left: 10px;
         }
+
+        // &__operator-wrapper {
+        //     display: flex;
+        //     flex-direction: column;
+        //     justify-content: space-evenly;
+        //     height: 100%;
+        // }
     }
 
     p {

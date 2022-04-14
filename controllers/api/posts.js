@@ -120,9 +120,12 @@ export const post_put = [
 		if (!errors.isEmpty()) {
 			return res.status(400).json(errors.array());
 		}
+		console.log('here');
 
-		const post = await Post.findById(req.params.id);
+		const post = await Post.findById(req.params.postId);
 		if (post) {
+			post.title = req.body.title ? req.body.title : post.title;
+			post.post = req.body.post ? req.body.post : post.post;
 			// check if logged in user (cookies) matches the post author
 			post.save((err) => {
 				if (err) {

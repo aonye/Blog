@@ -21,8 +21,14 @@ const Post = (props) => {
 	const username = author.username;
 	const date = moment(timestamp).format('MM-DD-YYYY');
 
-	const [showComment, setShowComment] = useState(true);
+	const [editableFields, setEditableFields] = useState({
+		post_title: true,
+		post_text: true,
+		comment: true,
+	});
 	const [commentText, setCommentText] = useState('');
+	// const [postTitle, setPostTitle] = useState();
+	// const [postText, setPostText] = useState();
 
 	async function deletePost(postID) {
 		const cookie = document.cookie;
@@ -85,16 +91,62 @@ const Post = (props) => {
 		}
 	}
 
+	async function updatePost(fieldName, value) {
+		console.log(fieldName, value);
+		const cookie = document.cookie;
+		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
+		try {
+			const res = await fetch(
+				`http://localhost:8000/api/posts/${postID}`,
+				{
+					method: 'PUT',
+					mode: 'cors',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify({
+						[fieldName]: value,
+					}),
+				},
+			);
+			const resJson = await res.json();
+			if (res.status === 200) {
+				console.log(resJson);
+				refreshPosts();
+				return resJson;
+			} else {
+				console.log('some error occured');
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
 	function handleInputEnd(e) {
+		const fieldName = e.target.className.split('-')[1];
 		if (e.keyCode === 13) {
-			addComment(commentText);
-			setCommentText('');
-			setShowComment(true);
+			if (fieldName === 'comment') {
+				addComment(commentText);
+				setCommentText('');
+			} else if (fieldName === 'post_title') {
+				const sampleText = 'Lets go to space';
+				updatePost('title', sampleText);
+			} else if (fieldName === 'post_text') {
+				const sampleText = 'Tesla versus the world';
+				updatePost('post', sampleText);
+			}
+			setEditableFields((prevState) => {
+				return { ...prevState, [fieldName]: true };
+			});
 			refreshPosts();
 		}
 		if (e.keyCode === 27) {
 			setCommentText('');
-			setShowComment(true);
+			setEditableFields((prevState) => {
+				return { ...prevState, [fieldName]: true };
+			});
 		}
 	}
 
@@ -114,30 +166,79 @@ const Post = (props) => {
 							<span>{date}</span>
 						</div>
 					</div>
-					<span className="post__info__title">{title}</span>
+					<div>
+						{editableFields.post_title ? (
+							<span
+								className="post__info__title hoverable"
+								onClick={() =>
+									setEditableFields((prevState) => {
+										return {
+											...prevState,
+											post_title: false,
+										};
+									})
+								}
+							>
+								{title}
+							</span>
+						) : (
+							<input
+								type="text"
+								defaultValue={title}
+								className="input-post_title"
+								onChange={(e) => setCommentText(e.target.value)}
+								onKeyDown={(e) => handleInputEnd(e)}
+							></input>
+						)}
+					</div>
 				</div>
 				{authorID === userID ? (
-					<div
-						className="deleteLink"
+					<span
+						className="deleteLink hoverable"
 						onClick={() => deletePost(postID)}
 					>
 						Delete Post
-					</div>
+					</span>
 				) : null}
 			</div>
-			<p>{post}</p>
+			{editableFields.post_text ? (
+				<p
+					className="hoverable"
+					onClick={() =>
+						setEditableFields((prevState) => {
+							return {
+								...prevState,
+								post_text: false,
+							};
+						})
+					}
+				>
+					{post}
+				</p>
+			) : (
+				<input
+					type="text"
+					defaultValue={post}
+					className="input-post_text"
+					onChange={(e) => setCommentText(e.target.value)}
+					onKeyDown={(e) => handleInputEnd(e)}
+				></input>
+			)}
 			<div className="post__comment">
-				{showComment ? (
+				{editableFields.comment ? (
 					<button
 						className="btn"
-						onClick={() => setShowComment(false)}
+						onClick={() =>
+							setEditableFields((prevState) => {
+								return { ...prevState, comment: false };
+							})
+						}
 					>
 						Comment
 					</button>
 				) : (
 					<input
-						className="input"
-						onClick={() => setShowComment(false)}
+						className="input-comment"
 						onChange={(e) => setCommentText(e.target.value)}
 						onKeyDown={(e) => handleInputEnd(e)}
 					></input>
