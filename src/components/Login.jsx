@@ -35,9 +35,9 @@ const Login = ({ setID }) => {
 				document.cookie = `token=${resJson.token}; SameSite=None; Secure`;
 				const id = jwtDecode(resJson.token).id;
 				console.log(id, 'info');
-				setID(id);
 				setTimeout(() => {
 					history.push('/');
+					setID(id);
 				}, 5000);
 			} else {
 				setMsg('Some error occured');

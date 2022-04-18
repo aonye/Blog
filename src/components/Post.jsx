@@ -4,6 +4,7 @@ import moment from 'moment';
 import acctIcon from '../acct-icon.png';
 import './Post.scss';
 
+import { updatePost } from './FetchController.js';
 import Comment from './Comment.jsx';
 
 const Post = (props) => {
@@ -11,6 +12,7 @@ const Post = (props) => {
 		author,
 		title,
 		post,
+		published,
 		timestamp,
 		comments,
 		userID,
@@ -27,8 +29,11 @@ const Post = (props) => {
 		comment: true,
 	});
 	const [commentText, setCommentText] = useState('');
-	// const [postTitle, setPostTitle] = useState();
-	// const [postText, setPostText] = useState();
+	const [postTitle, setPostTitle] = useState(title);
+	const [postText, setPostText] = useState(post);
+	const [publishedStatus, setPublishedStatus] = useState(published);
+
+	console.log(published, publishedStatus, 'sdfsdfdf');
 
 	async function deletePost(postID) {
 		const cookie = document.cookie;
@@ -91,51 +96,22 @@ const Post = (props) => {
 		}
 	}
 
-	async function updatePost(fieldName, value) {
-		console.log(fieldName, value);
-		const cookie = document.cookie;
-		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
-		try {
-			const res = await fetch(
-				`http://localhost:8000/api/posts/${postID}`,
-				{
-					method: 'PUT',
-					mode: 'cors',
-					credentials: 'include',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${token}`,
-					},
-					body: JSON.stringify({
-						[fieldName]: value,
-					}),
-				},
-			);
-			const resJson = await res.json();
-			if (res.status === 200) {
-				console.log(resJson);
-				refreshPosts();
-				return resJson;
-			} else {
-				console.log('some error occured');
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
-
-	function handleInputEnd(e) {
+	async function handleInputEnd(e) {
 		const fieldName = e.target.className.split('-')[1];
 		if (e.keyCode === 13) {
 			if (fieldName === 'comment') {
 				addComment(commentText);
 				setCommentText('');
-			} else if (fieldName === 'post_title') {
-				const sampleText = 'Lets go to space';
-				updatePost('title', sampleText);
-			} else if (fieldName === 'post_text') {
-				const sampleText = 'Tesla versus the world';
-				updatePost('post', sampleText);
+			} else if (
+				fieldName === 'post_title' ||
+				fieldName === 'post_text'
+			) {
+				const payload = {
+					title: postTitle,
+					post: postText,
+					published: true,
+				};
+				await updatePost(payload, postID);
 			}
 			setEditableFields((prevState) => {
 				return { ...prevState, [fieldName]: true };
@@ -150,113 +126,141 @@ const Post = (props) => {
 		}
 	}
 
+	async function handlePublish() {
+		console.log('in here');
+		const payload = {
+			title: postTitle,
+			post: postText,
+			published: false,
+		};
+		setPublishedStatus(false);
+		await updatePost(payload, postID);
+	}
+
 	return (
-		<div className="post">
-			<div className="post__info">
-				<div className="testwrapper">
-					<div className="post__info__wrapper">
-						<img
-							src={acctIcon}
-							alt="acct-icon"
-							width="50px"
-							height="50px"
-						></img>
-						<div className="flex-col">
-							<span>{username}</span>
-							<span>{date}</span>
+		<>
+			{publishedStatus === true ? (
+				<div className="post">
+					<div className="post__info">
+						<div className="testwrapper">
+							<div className="post__info__wrapper">
+								<img
+									src={acctIcon}
+									alt="acct-icon"
+									width="50px"
+									height="50px"
+								></img>
+								<div className="flex-col">
+									<span>{username}</span>
+									<span>{date}</span>
+								</div>
+							</div>
+							<div>
+								{editableFields.post_title ? (
+									<span
+										className="post__info__title hoverable"
+										onClick={() =>
+											setEditableFields((prevState) => {
+												return {
+													...prevState,
+													post_title: false,
+												};
+											})
+										}
+									>
+										{postTitle}
+									</span>
+								) : (
+									<input
+										type="text"
+										defaultValue={postTitle}
+										className="input-post_title"
+										onChange={(e) =>
+											setPostTitle(e.target.value)
+										}
+										onKeyDown={(e) => handleInputEnd(e)}
+									></input>
+								)}
+							</div>
 						</div>
+						{authorID === userID ? (
+							<div className="flex-col">
+								<span
+									className="deleteLink hoverable"
+									onClick={() => handlePublish()}
+								>
+									Unpublish Post
+								</span>
+								<span
+									className="deleteLink hoverable"
+									onClick={() => deletePost(postID)}
+								>
+									Delete Post
+								</span>
+							</div>
+						) : null}
 					</div>
-					<div>
-						{editableFields.post_title ? (
-							<span
-								className="post__info__title hoverable"
+					{editableFields.post_text ? (
+						<p
+							className="hoverable"
+							onClick={() =>
+								setEditableFields((prevState) => {
+									return {
+										...prevState,
+										post_text: false,
+									};
+								})
+							}
+						>
+							{postText}
+						</p>
+					) : (
+						<input
+							type="text"
+							defaultValue={postText}
+							className="input-post_text"
+							onChange={(e) => setPostText(e.target.value)}
+							onKeyDown={(e) => handleInputEnd(e)}
+						></input>
+					)}
+					<div className="post__comment">
+						{editableFields.comment ? (
+							<button
+								className="btn"
 								onClick={() =>
 									setEditableFields((prevState) => {
 										return {
 											...prevState,
-											post_title: false,
+											comment: false,
 										};
 									})
 								}
 							>
-								{title}
-							</span>
+								Comment
+							</button>
 						) : (
 							<input
-								type="text"
-								defaultValue={title}
-								className="input-post_title"
+								className="input-comment"
 								onChange={(e) => setCommentText(e.target.value)}
 								onKeyDown={(e) => handleInputEnd(e)}
 							></input>
 						)}
 					</div>
+					{comments.map((i, index) => {
+						return (
+							<div key={index}>
+								<Comment
+									{...i}
+									postID={postID}
+									userID={userID}
+									refreshPosts={refreshPosts}
+								/>
+							</div>
+						);
+					})}
 				</div>
-				{authorID === userID ? (
-					<span
-						className="deleteLink hoverable"
-						onClick={() => deletePost(postID)}
-					>
-						Delete Post
-					</span>
-				) : null}
-			</div>
-			{editableFields.post_text ? (
-				<p
-					className="hoverable"
-					onClick={() =>
-						setEditableFields((prevState) => {
-							return {
-								...prevState,
-								post_text: false,
-							};
-						})
-					}
-				>
-					{post}
-				</p>
-			) : (
-				<input
-					type="text"
-					defaultValue={post}
-					className="input-post_text"
-					onChange={(e) => setCommentText(e.target.value)}
-					onKeyDown={(e) => handleInputEnd(e)}
-				></input>
-			)}
-			<div className="post__comment">
-				{editableFields.comment ? (
-					<button
-						className="btn"
-						onClick={() =>
-							setEditableFields((prevState) => {
-								return { ...prevState, comment: false };
-							})
-						}
-					>
-						Comment
-					</button>
-				) : (
-					<input
-						className="input-comment"
-						onChange={(e) => setCommentText(e.target.value)}
-						onKeyDown={(e) => handleInputEnd(e)}
-					></input>
-				)}
-			</div>
-			{comments.map((i, index) => {
-				return (
-					<div key={index}>
-						<Comment
-							{...i}
-							postID={postID}
-							userID={userID}
-							refreshPosts={refreshPosts}
-						/>
-					</div>
-				);
-			})}
-		</div>
+			) : null}
+		</>
 	);
 };
 

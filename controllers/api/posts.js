@@ -101,17 +101,17 @@ export const post_put = [
 	body('title')
 		.trim()
 		.isLength({ min: 1, max: 100 })
-		.withMessage('Comment is too long')
+		.withMessage('Title is too long')
 		.escape(),
 	body('post')
 		.trim()
 		.isLength({ min: 1, max: 2000 })
-		.withMessage('Author is too long')
+		.withMessage('Post text is too long')
 		.escape(),
 	body('published')
 		.trim()
 		.isLength({ min: 4, max: 5 })
-		.withMessage('Publish is too long')
+		.withMessage('Invalid publish state')
 		.escape(),
 
 	async (req, res) => {
@@ -120,12 +120,12 @@ export const post_put = [
 		if (!errors.isEmpty()) {
 			return res.status(400).json(errors.array());
 		}
-		console.log('here');
 
 		const post = await Post.findById(req.params.postId);
 		if (post) {
 			post.title = req.body.title ? req.body.title : post.title;
 			post.post = req.body.post ? req.body.post : post.post;
+			post.published = req.body.published === 'true';
 			// check if logged in user (cookies) matches the post author
 			post.save((err) => {
 				if (err) {
