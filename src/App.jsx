@@ -8,27 +8,23 @@ import Nav from './components/Nav.jsx';
 import Login from './components/Login';
 import Main from './components/Main.jsx';
 import Post from './components/Post.jsx';
+import Drafts from './components/Drafts.jsx';
 
 function App() {
 	const [posts, setPosts] = useState();
-	const [id, setID] = useState(null);
-	function clearCookies() {
-		console.lg('xd');
-	}
-
-	function showCookiesInConsole() {
-		console.log(document.cookie);
-	}
+	const [id, setID] = useState();
 
 	useEffect(async () => {
-		refreshPosts();
+		getAllPosts();
+		const cookie = document.cookie;
+		let token = null;
+		if (cookie) {
+			[token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
+		}
+		setIDFromToken(token);
 	}, []);
 
-	async function getPosts() {
-		// e.preventDefault();
-		const cookie = document.cookie;
-		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
-		setIDFromToken(token);
+	async function getAllPosts() {
 		try {
 			const res = await fetch('http://localhost:8000/api/posts', {
 				method: 'GET',
@@ -36,11 +32,11 @@ function App() {
 				credentials: 'include',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
 				},
 			});
 			const resJson = await res.json();
 			if (res.status === 200) {
+				setPosts(resJson);
 				return resJson;
 			} else {
 				console.log('some error occured');
@@ -50,10 +46,37 @@ function App() {
 		}
 	}
 
+	async function getPosts() {
+		// e.preventDefault();
+		// const cookie = document.cookie;
+		// const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
+		// setIDFromToken(token);
+		// try {
+		// 	const res = await fetch('http://localhost:8000/api/posts', {
+		// 		method: 'GET',
+		// 		mode: 'cors',
+		// 		credentials: 'include',
+		// 		headers: {
+		// 			'Content-Type': 'application/json',
+		// 			Authorization: `Bearer ${token}`,
+		// 		},
+		// 	});
+		// 	const resJson = await res.json();
+		// 	if (res.status === 200) {
+		// 		return resJson;
+		// 	} else {
+		// 		console.log('some error occured');
+		// 	}
+		// } catch (err) {
+		// 	console.log(err);
+		// }
+	}
+
 	async function setIDFromToken(token = null) {
 		if (token) {
 			const id = jwtDecode(token).id;
 			setID(id);
+			console.log(id);
 		}
 	}
 
@@ -149,18 +172,24 @@ function App() {
 							refreshPosts={refreshPosts}
 						/>
 					</Route>
-					<Route exact path="/test"></Route>
+					<Route exact path="/drafts">
+						<Drafts
+							setIDFromToken={setIDFromToken}
+							userID={id}
+							refreshPosts={refreshPosts}
+						/>
+					</Route>
 					<Route exact path="/login">
 						<Login setID={setID} />
 					</Route>
 				</Switch>
 			</BrowserRouter>
-			<button onClick={clearCookies}>Clear Cookies</button>
+			{/* <button onClick={clearCookies}>Clear Cookies</button>
 			<button onClick={showCookiesInConsole}>
 				Show cookie in console
 			</button>
 			<button onClick={(e) => getPosts(e)}>get posts</button>
-			<button onClick={() => console.log(id)}>Get Token</button>
+			<button onClick={() => console.log(id)}>Get Token</button> */}
 			{/* <div>
 				{posts
 					? posts.map((i, index) => {

@@ -9,9 +9,9 @@ function Nav() {
 				<img className="logo ratio1H4W" src={mediumLogo} alt="logo" />
 				<Github />
 				<div className="btns">
-					<a className="btns__signup-wrapper" href="/signup">
+					<a className="btns__signup-wrapper" href="/drafts">
 						<button type="button" className="btns__signup">
-							Sign up
+							My Drafts
 						</button>
 					</a>
 					<a className="btns__signup-wrapper" href="/login">

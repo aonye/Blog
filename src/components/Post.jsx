@@ -139,127 +139,125 @@ const Post = (props) => {
 
 	return (
 		<>
-			{publishedStatus === true ? (
-				<div className="post">
-					<div className="post__info">
-						<div className="testwrapper">
-							<div className="post__info__wrapper">
-								<img
-									src={acctIcon}
-									alt="acct-icon"
-									width="50px"
-									height="50px"
-								></img>
-								<div className="flex-col">
-									<span>{username}</span>
-									<span>{date}</span>
-								</div>
-							</div>
-							<div>
-								{editableFields.post_title ? (
-									<span
-										className="post__info__title hoverable"
-										onClick={() =>
-											setEditableFields((prevState) => {
-												return {
-													...prevState,
-													post_title: false,
-												};
-											})
-										}
-									>
-										{postTitle}
-									</span>
-								) : (
-									<input
-										type="text"
-										defaultValue={postTitle}
-										className="input-post_title"
-										onChange={(e) =>
-											setPostTitle(e.target.value)
-										}
-										onKeyDown={(e) => handleInputEnd(e)}
-									></input>
-								)}
+			<div className="post">
+				<div className="post__info">
+					<div className="testwrapper">
+						<div className="post__info__wrapper">
+							<img
+								src={acctIcon}
+								alt="acct-icon"
+								width="50px"
+								height="50px"
+							></img>
+							<div className="flex-col">
+								<span>{username}</span>
+								<span>{date}</span>
 							</div>
 						</div>
-						{authorID === userID ? (
-							<div className="flex-col">
+						<div>
+							{editableFields.post_title ? (
 								<span
-									className="deleteLink hoverable"
-									onClick={() => handlePublish()}
+									className="post__info__title hoverable"
+									onClick={() =>
+										setEditableFields((prevState) => {
+											return {
+												...prevState,
+												post_title: false,
+											};
+										})
+									}
 								>
-									Unpublish Post
+									{postTitle}
 								</span>
-								<span
-									className="deleteLink hoverable"
-									onClick={() => deletePost(postID)}
-								>
-									Delete Post
-								</span>
-							</div>
-						) : null}
+							) : (
+								<input
+									type="text"
+									defaultValue={postTitle}
+									className="input-post_title"
+									onChange={(e) =>
+										setPostTitle(e.target.value)
+									}
+									onKeyDown={(e) => handleInputEnd(e)}
+								></input>
+							)}
+						</div>
 					</div>
-					{editableFields.post_text ? (
-						<p
-							className="hoverable"
+					{authorID === userID ? (
+						<div className="flex-col">
+							<span
+								className="deleteLink hoverable"
+								onClick={() => handlePublish()}
+							>
+								Unpublish Post
+							</span>
+							<span
+								className="deleteLink hoverable"
+								onClick={() => deletePost(postID)}
+							>
+								Delete Post
+							</span>
+						</div>
+					) : null}
+				</div>
+				{editableFields.post_text ? (
+					<p
+						className="hoverable"
+						onClick={() =>
+							setEditableFields((prevState) => {
+								return {
+									...prevState,
+									post_text: false,
+								};
+							})
+						}
+					>
+						{postText}
+					</p>
+				) : (
+					<input
+						type="text"
+						defaultValue={postText}
+						className="input-post_text"
+						onChange={(e) => setPostText(e.target.value)}
+						onKeyDown={(e) => handleInputEnd(e)}
+					></input>
+				)}
+				<div className="post__comment">
+					{editableFields.comment ? (
+						<button
+							className="btn"
 							onClick={() =>
 								setEditableFields((prevState) => {
 									return {
 										...prevState,
-										post_text: false,
+										comment: false,
 									};
 								})
 							}
 						>
-							{postText}
-						</p>
+							Comment
+						</button>
 					) : (
 						<input
-							type="text"
-							defaultValue={postText}
-							className="input-post_text"
-							onChange={(e) => setPostText(e.target.value)}
+							className="input-comment"
+							onChange={(e) => setCommentText(e.target.value)}
 							onKeyDown={(e) => handleInputEnd(e)}
 						></input>
 					)}
-					<div className="post__comment">
-						{editableFields.comment ? (
-							<button
-								className="btn"
-								onClick={() =>
-									setEditableFields((prevState) => {
-										return {
-											...prevState,
-											comment: false,
-										};
-									})
-								}
-							>
-								Comment
-							</button>
-						) : (
-							<input
-								className="input-comment"
-								onChange={(e) => setCommentText(e.target.value)}
-								onKeyDown={(e) => handleInputEnd(e)}
-							></input>
-						)}
-					</div>
-					{comments.map((i, index) => {
-						return (
-							<div key={index}>
-								<Comment
-									{...i}
-									postID={postID}
-									userID={userID}
-									refreshPosts={refreshPosts}
-								/>
-							</div>
-						);
-					})}
 				</div>
-			) : null}
+				{comments.map((i, index) => {
+					return (
+						<div key={index}>
+							<Comment
+								{...i}
+								postID={postID}
+								userID={userID}
+								refreshPosts={refreshPosts}
+							/>
+						</div>
+					);
+				})}
+			</div>
 		</>
 	);
 };

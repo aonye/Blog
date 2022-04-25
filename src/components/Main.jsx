@@ -15,7 +15,7 @@ const Main = (props) => {
 	// 	return posts;
 	// }
 
-	// async function makePosts(posts) {
+	// async function makePosts() {
 	// 	// posts is a promise
 	// 	console.log(posts);
 	// 	posts
@@ -36,20 +36,48 @@ const Main = (props) => {
 	// 		);
 	// }
 
+	// function makePosts() {
+	// 	if (isDrafts === true) {
+	// 		const mappedPosts = posts.map((i, index) => {
+	// 			return i.published === false ? (
+	// 				<Post
+	// 					key={index}
+	// 					{...i}
+	// 					refreshPosts={refreshPosts}
+	// 					userID={userID}
+	// 				/>
+	// 			) : null;
+	// 		});
+	// 		return mappedPosts.find((element) => element !== null) ? (
+	// 			mappedPosts
+	// 		) : (
+	// 			<span>No drafts</span>
+	// 		);
+	// 	} else {
+	// 		posts.map((i, index) => {
+	// 			return (
+	// 				<Post
+	// 					key={index}
+	// 					{...i}
+	// 					refreshPosts={refreshPosts}
+	// 					userID={userID}
+	// 				/>
+	// 			);
+	// 		});
+	// 	}
+	// }
+
 	return (
 		<div>
 			{posts
 				? posts.map((i, index) => {
 						return (
-							<div key={index}>
-								{
-									<Post
-										{...i}
-										refreshPosts={refreshPosts}
-										userID={userID}
-									/>
-								}
-							</div>
+							<Post
+								key={index}
+								{...i}
+								refreshPosts={refreshPosts}
+								userID={userID}
+							/>
 						);
 				  })
 				: null}

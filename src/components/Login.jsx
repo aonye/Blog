@@ -14,7 +14,7 @@ const Login = ({ setID }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await fetch('http://localhost:8000/auth', {
+			const res = await fetch('http://localhost:8000/login', {
 				method: 'POST',
 				mode: 'cors',
 				headers: {

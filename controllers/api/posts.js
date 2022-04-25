@@ -29,8 +29,7 @@ const commentSample = new Comment({
 });
 
 export const posts_index_get = async (req, res) => {
-	// only return published posts
-	const post = await Post.find({ published: 'true' })
+	const post = await Post.find()
 		.populate('author')
 		.populate({
 			path: 'comments',
@@ -40,7 +39,28 @@ export const posts_index_get = async (req, res) => {
 			},
 		})
 		.populate();
-	console.log(post);
+	return post === null
+		? res.status(400).json({ error: 'Cannot find posts' })
+		: post.length === 0
+		? res.status(404).json({ error: 'No posts found' })
+		: res.json(post);
+};
+
+export const posts_user_index_get = async (req, res) => {
+	// Find posts given user ID
+	const post = await Post.find({
+		author: {
+			_id: req.params.userId,
+		},
+	})
+		.populate('author')
+		.populate({
+			path: 'comments',
+			populate: {
+				path: 'author',
+				model: 'User',
+			},
+		});
 	return post === null
 		? res.status(400).json({ error: 'Cannot find posts' })
 		: post.length === 0

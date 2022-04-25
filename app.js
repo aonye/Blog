@@ -6,7 +6,7 @@ import 'dotenv/config';
 // import path from 'path';
 import APIRouter from './routes/api/index.js';
 import login from './routes/app/login.js';
-import auth from './routes/app/auth.js';
+// import auth from './routes/app/auth.js';
 import bodyParser from 'body-parser';
 
 // mongoose/mongoDB
@@ -44,8 +44,8 @@ app.use(cors(corsOptions)); // Use this after the variable declaration
 //     res.sendFile(path.join(__dirname, "oldpublic", "index.html"));
 // });
 
-app.use('/auth', auth);
-app.use('/api', passport.authenticate('jwt', { session: false }), APIRouter);
+app.use('/login', login);
+app.use('/api', APIRouter);
 
 app.listen(process.env.PORT, () => {
 	console.log(`Server started at Port: ${process.env.PORT}`);
