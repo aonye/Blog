@@ -32,7 +32,10 @@
   },
   "scripts": {
     "start": "node app.js",
-    "heroku-postbuild": "cd build && npm install && npm run build"
+    "server": "nodemon",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
   },
   "eslintConfig": {
     "extends": [

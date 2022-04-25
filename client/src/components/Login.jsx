@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 
 const Login = ({ setID }) => {
@@ -9,7 +8,7 @@ const Login = ({ setID }) => {
 	const [password, setPassword] = useState('');
 	const [msg, setMsg] = useState('');
 
-	const history = useHistory();
+	// const history = useHistory();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -36,7 +35,7 @@ const Login = ({ setID }) => {
 				const id = jwtDecode(resJson.token).id;
 				console.log(id, 'info');
 				setTimeout(() => {
-					history.push('/');
+					// history.push('/');
 					setID(id);
 				}, 5000);
 			} else {

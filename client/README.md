@@ -1,11 +1,3 @@
-# Sample Blog. Designed based on Medium.com. All rights reserved.
-
-Backend constructed with Node/Express. API designed with REST principles.
-
-Front end constructed with ReactJS.
-
-Application fully separates front and backend.
-
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -76,10 +68,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-    "start": "PORT=3000 react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "nodestart": "nodemon app.js",
-    "newstart": "npm run build && npm start"
