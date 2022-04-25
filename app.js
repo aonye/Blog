@@ -17,13 +17,14 @@ mongoose.connect(process.env.MONGO, {
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, './build')));
+// app.use(express.static(path.join(__dirname, './build')));
+app.use(express.static(path.resolve(__dirname, "./build")));
 
 const corsOptions = {
 	origin: 'http://localhost:3000',
