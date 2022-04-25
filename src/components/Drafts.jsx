@@ -1,5 +1,3 @@
-/* eslint-disable no-unreachable */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import Post from './Post';
@@ -7,43 +5,44 @@ import Post from './Post';
 import { getDrafts } from './FetchController.js';
 
 const Drafts = ({ setIDFromToken, refreshPosts, userID }) => {
-	const [loggedIn, setLoggedIn] = useState(<span>Not logged in</span>);
+	const [userMsg, setUserMsg] = useState(<span>Not logged in</span>);
 	const [drafts, setDrafts] = useState(null);
 
 	useEffect(async () => {
-		const cookie = document.cookie;
-		if (cookie === '') {
-			setDrafts([]);
-		} else {
-			setLoggedIn(null);
-			const filteredDrafts = await makePosts();
-			console.log(filteredDrafts);
-			setDrafts(filteredDrafts);
+		if (document.cookie !== '') {
+			setUserMsg(null);
+			refreshDrafts();
 		}
 	}, []);
 
-	async function makePosts() {
+	async function getFilteredDrafts() {
 		const drafts = await getDrafts();
-		console.log(drafts);
 		return drafts.filter((i) => i.published === false);
+	}
+
+	async function refreshDrafts() {
+		const drafts = await getFilteredDrafts();
+		return drafts.length <= 0
+			? (setUserMsg(<span>No drafts found</span>), setDrafts(null))
+			: setDrafts(drafts);
 	}
 
 	return (
 		<>
 			{drafts
 				? drafts.map((i, index) => {
-						console.log(i);
 						return (
 							<Post
 								key={index}
 								{...i}
-								refreshPosts={refreshPosts}
+								refresh={refreshDrafts}
 								userID={userID}
+								isDraft={true}
 							/>
 						);
 				  })
 				: null}
-			{loggedIn}
+			{userMsg}
 		</>
 	);
 };

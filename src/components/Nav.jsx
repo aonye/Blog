@@ -6,7 +6,13 @@ function Nav() {
 	return (
 		<nav className="nav">
 			<div className="nav__wrapper">
-				<img className="logo ratio1H4W" src={mediumLogo} alt="logo" />
+				<a className="hoverable" href="/">
+					<img
+						className="logo ratio1H4W"
+						src={mediumLogo}
+						alt="logo"
+					/>
+				</a>
 				<Github />
 				<div className="btns">
 					<a className="btns__signup-wrapper" href="/drafts">

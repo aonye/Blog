@@ -3,7 +3,7 @@
 import Post from './Post';
 
 const Main = (props) => {
-	const { posts, refreshPosts, userID } = props;
+	const { posts, refresh, userID } = props;
 
 	// function addStuff() {
 	// 	const newDiv = <div>Hello world</div>;
@@ -75,8 +75,9 @@ const Main = (props) => {
 							<Post
 								key={index}
 								{...i}
-								refreshPosts={refreshPosts}
+								refresh={refresh}
 								userID={userID}
+								isDraft={false}
 							/>
 						);
 				  })

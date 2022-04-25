@@ -1,9 +1,15 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import acctIcon from '../acct-icon.png';
 import './Comment.scss';
 
-import { updateComment } from './FetchController.js';
+import {
+	updateComment,
+	deleteCommentByID,
+	getTokenFromCookie,
+	getIDFromJWTToken,
+} from './FetchController.js';
 import moment from 'moment';
 
 const Comment = (props) => {
@@ -13,56 +19,27 @@ const Comment = (props) => {
 		text,
 		timestamp,
 		postID,
-		userID,
-		refreshPosts,
+		// userID,
+		refresh,
 	} = props;
+	const userID = getIDFromJWTToken(getTokenFromCookie());
 	const date = moment(timestamp).format('MM-DD-YYYY');
 
 	const [commentText, setCommentText] = useState(text);
 	const [editStatus, setEditStatus] = useState(false);
-
-	console.log(setEditStatus);
-
-	async function deleteCommentByID() {
-		const cookie = document.cookie;
-		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
-		try {
-			const res = await fetch(
-				`http://localhost:8000/api/posts/${postID}/comments/${commentID}`,
-				{
-					method: 'DELETE',
-					mode: 'cors',
-					credentials: 'include',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
-			const resJson = await res.json();
-			if (res.status === 200) {
-				refreshPosts();
-				console.log(resJson);
-				return resJson;
-			} else {
-				console.log('some error occured');
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
 
 	async function handleInputEnd(e) {
 		if (e.keyCode === 13) {
 			const payload = {
 				text: commentText,
 			};
-			await updateComment(payload, postID, commentID);
+			console.log(payload, postID, commentID);
+			// await updateComment(payload, postID, commentID);
 			setEditStatus(false);
 		}
 		if (e.keyCode === 27) {
 			setEditStatus(false);
-			setCommentText(text);
+			// setCommentText(text);
 		}
 	}
 
@@ -109,7 +86,10 @@ const Comment = (props) => {
 						<div className="comment-operator">
 							<span
 								className="link hoverable"
-								onClick={(e) => deleteCommentByID(commentID)}
+								onClick={async () => {
+									await deleteCommentByID(postID, commentID);
+									refresh();
+								}}
 							>
 								Delete Comment
 							</span>

@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import moment from 'moment';
 import acctIcon from '../acct-icon.png';
 import './Post.scss';
 
-import { updatePost } from './FetchController.js';
+import { updatePost, deletePost, addComment } from './FetchController.js';
 import Comment from './Comment.jsx';
 
 const Post = (props) => {
@@ -17,7 +18,8 @@ const Post = (props) => {
 		comments,
 		userID,
 		_id: postID,
-		refreshPosts,
+		refresh,
+		isDraft,
 	} = props;
 	const authorID = author._id;
 	const username = author.username;
@@ -33,74 +35,11 @@ const Post = (props) => {
 	const [postText, setPostText] = useState(post);
 	const [publishedStatus, setPublishedStatus] = useState(published);
 
-	console.log(published, publishedStatus, 'sdfsdfdf');
-
-	async function deletePost(postID) {
-		const cookie = document.cookie;
-		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
-		try {
-			const res = await fetch(
-				`http://localhost:8000/api/posts/${postID}`,
-				{
-					method: 'DELETE',
-					mode: 'cors',
-					credentials: 'include',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
-			const resJson = await res.json();
-			if (res.status === 200) {
-				console.log(resJson);
-				refreshPosts();
-				return resJson;
-			} else {
-				console.log('some error occured');
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
-
-	async function addComment(text) {
-		const cookie = document.cookie;
-		const [token] = cookie.match(/(?<=token=)(.*?)((?=$)|(?=\s))/g);
-		try {
-			const res = await fetch(
-				`http://localhost:8000/api/posts/${postID}/comments`,
-				{
-					method: 'POST',
-					mode: 'cors',
-					credentials: 'include',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${token}`,
-					},
-					body: JSON.stringify({
-						text,
-					}),
-				},
-			);
-			const resJson = await res.json();
-			if (res.status === 200) {
-				console.log(resJson);
-				refreshPosts();
-				return resJson;
-			} else {
-				console.log('some error occured');
-			}
-		} catch (err) {
-			console.log(err);
-		}
-	}
-
 	async function handleInputEnd(e) {
 		const fieldName = e.target.className.split('-')[1];
 		if (e.keyCode === 13) {
 			if (fieldName === 'comment') {
-				addComment(commentText);
+				await addComment(commentText, postID);
 				setCommentText('');
 			} else if (
 				fieldName === 'post_title' ||
@@ -116,7 +55,7 @@ const Post = (props) => {
 			setEditableFields((prevState) => {
 				return { ...prevState, [fieldName]: true };
 			});
-			refreshPosts();
+			refresh();
 		}
 		if (e.keyCode === 27) {
 			setCommentText('');
@@ -127,13 +66,12 @@ const Post = (props) => {
 	}
 
 	async function handlePublish() {
-		console.log('in here');
 		const payload = {
 			title: postTitle,
 			post: postText,
-			published: false,
+			published: true,
 		};
-		setPublishedStatus(false);
+		setPublishedStatus(true);
 		await updatePost(payload, postID);
 	}
 
@@ -182,22 +120,30 @@ const Post = (props) => {
 							)}
 						</div>
 					</div>
-					{authorID === userID ? (
-						<div className="flex-col">
+					<div className="flex-col">
+						{isDraft === true ? (
 							<span
 								className="deleteLink hoverable"
-								onClick={() => handlePublish()}
+								onClick={async () => {
+									await handlePublish();
+									refresh();
+								}}
 							>
-								Unpublish Post
+								Publish Post
 							</span>
+						) : null}
+						{authorID === userID ? (
 							<span
 								className="deleteLink hoverable"
-								onClick={() => deletePost(postID)}
+								onClick={async () => {
+									await deletePost(postID);
+									refresh();
+								}}
 							>
 								Delete Post
 							</span>
-						</div>
-					) : null}
+						) : null}
+					</div>
 				</div>
 				{editableFields.post_text ? (
 					<p
@@ -248,12 +194,7 @@ const Post = (props) => {
 				{comments.map((i, index) => {
 					return (
 						<div key={index}>
-							<Comment
-								{...i}
-								postID={postID}
-								userID={userID}
-								refreshPosts={refreshPosts}
-							/>
+							<Comment {...i} postID={postID} refresh={refresh} />
 						</div>
 					);
 				})}

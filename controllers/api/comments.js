@@ -35,6 +35,11 @@ export const comment_post = [
 		.isLength({ min: 1, max: 200 })
 		.withMessage('Comment is too long')
 		.escape(),
+	body('userId')
+		.trim()
+		.isLength({ min: 23, max: 24 })
+		.withMessage('UserID error')
+		.escape(),
 
 	async (req, res) => {
 		const errors = validationResult(req);
@@ -43,10 +48,14 @@ export const comment_post = [
 			return res.status(400).json(errors.array());
 		}
 
-		// in real scenario, get user from cookies
+		const author = await User.findOne({ id: req.params.userId });
+
+		if (!author) {
+			return res.status(404).json({ error: 'User error' });
+		}
 
 		const comment = new Comment({
-			author: mockAuthor2,
+			author,
 			text: req.body.text,
 			timestamp: new Date(),
 		});

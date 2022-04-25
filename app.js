@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import passport from './passport.js';
 import cors from 'cors';
 import 'dotenv/config';
-// import path from 'path';
+import path from 'path';
 import APIRouter from './routes/api/index.js';
 import login from './routes/app/login.js';
 // import auth from './routes/app/auth.js';
@@ -17,11 +17,13 @@ mongoose.connect(process.env.MONGO, {
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// const __dirname = path.resolve();
+const __dirname = path.resolve();
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, './build')));
 
 const corsOptions = {
 	origin: 'http://localhost:3000',

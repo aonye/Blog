@@ -87,8 +87,8 @@ function App() {
 	}
 
 	async function refreshPosts() {
-		const posts = await getPosts();
-		setPosts(posts);
+		const posts = await getAllPosts();
+		setPosts(sortActivePosts(posts));
 	}
 
 	// async function createPosts() {
@@ -175,7 +175,7 @@ function App() {
 						<Main
 							posts={posts}
 							userID={id}
-							refreshPosts={refreshPosts}
+							refresh={refreshPosts}
 						/>
 					</Route>
 					<Route exact path="/drafts">
