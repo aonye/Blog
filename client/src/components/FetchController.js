@@ -17,7 +17,7 @@ export function getIDFromJWTToken(token = null) {
 // POSTS
 export async function getAllPosts() {
 	try {
-		const res = await fetch('http://localhost:8000/api/posts', {
+		const res = await fetch('https://blogaonye.herokuapp.com/api/posts', {
 			method: 'GET',
 			mode: 'cors',
 			credentials: 'include',
@@ -44,7 +44,7 @@ export async function getDrafts() {
 			return;
 		}
 		const res = await fetch(
-			`http://localhost:8000/api/posts/${userID}/all`,
+			`https://blogaonye.herokuapp.com/api/posts/${userID}/all`,
 			{
 				method: 'GET',
 				mode: 'cors',
@@ -69,16 +69,19 @@ export async function getDrafts() {
 export async function updatePost(payload, postID) {
 	try {
 		const token = getTokenFromCookie();
-		const res = await fetch(`http://localhost:8000/api/posts/${postID}`, {
-			method: 'PUT',
-			mode: 'cors',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
+		const res = await fetch(
+			`https://blogaonye.herokuapp.com/api/posts/${postID}`,
+			{
+				method: 'PUT',
+				mode: 'cors',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify(payload),
 			},
-			body: JSON.stringify(payload),
-		});
+		);
 		const resJson = await res.json();
 		if (res.status === 200) {
 			return resJson;
@@ -93,15 +96,18 @@ export async function updatePost(payload, postID) {
 export async function deletePost(postID) {
 	try {
 		const token = getTokenFromCookie();
-		const res = await fetch(`http://localhost:8000/api/posts/${postID}`, {
-			method: 'DELETE',
-			mode: 'cors',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
+		const res = await fetch(
+			`https://blogaonye.herokuapp.com/api/posts/${postID}`,
+			{
+				method: 'DELETE',
+				mode: 'cors',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
 			},
-		});
+		);
 		const resJson = await res.json();
 		if (res.status === 200) {
 			return resJson;
@@ -122,7 +128,7 @@ export async function addComment(commentText, postID) {
 			return;
 		}
 		const res = await fetch(
-			`http://localhost:8000/api/posts/${postID}/comments/`,
+			`https://blogaonye.herokuapp.com/api/posts/${postID}/comments/`,
 			{
 				method: 'POST',
 				mode: 'cors',
@@ -152,7 +158,7 @@ export async function updateComment(payload, postID, commentID) {
 	try {
 		const token = getTokenFromCookie();
 		const res = await fetch(
-			`http://localhost:8000/api/posts/${postID}/comments/${commentID}`,
+			`https://blogaonye.herokuapp.com/api/posts/${postID}/comments/${commentID}`,
 			{
 				method: 'PUT',
 				mode: 'cors',
@@ -179,7 +185,7 @@ export async function deleteCommentByID(postID, commentID) {
 	try {
 		const token = getTokenFromCookie();
 		const res = await fetch(
-			`http://localhost:8000/api/posts/${postID}/comments/${commentID}`,
+			`https://blogaonye.herokuapp.com/api/posts/${postID}/comments/${commentID}`,
 			{
 				method: 'DELETE',
 				mode: 'cors',

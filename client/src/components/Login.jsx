@@ -13,7 +13,7 @@ const Login = ({ setID }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await fetch('http://localhost:8000/login', {
+			const res = await fetch('https://blogaonye.herokuapp.com/login', {
 				method: 'POST',
 				mode: 'cors',
 				headers: {
