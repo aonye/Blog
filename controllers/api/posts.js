@@ -29,7 +29,7 @@ const commentSample = new Comment({
 });
 
 export const posts_index_get = async (req, res) => {
-	const post = await Post.find()
+	const posts = await Post.find()
 		.populate('author')
 		.populate({
 			path: 'comments',
@@ -39,11 +39,11 @@ export const posts_index_get = async (req, res) => {
 			},
 		})
 		.populate();
-	return post === null
+	return posts === null
 		? res.status(400).json({ error: 'Cannot find posts' })
-		: post.length === 0
+		: posts.length === 0
 		? res.status(404).json({ error: 'No posts found' })
-		: res.json(post);
+		: res.json(posts);
 };
 
 export const posts_user_index_get = async (req, res) => {

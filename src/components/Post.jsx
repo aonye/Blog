@@ -109,7 +109,7 @@ const Post = (props) => {
 				const payload = {
 					title: postTitle,
 					post: postText,
-					published: true,
+					published: publishedStatus,
 				};
 				await updatePost(payload, postID);
 			}

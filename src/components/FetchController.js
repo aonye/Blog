@@ -1,5 +1,27 @@
 import jwtDecode from 'jwt-decode';
 
+export async function getAllPosts() {
+	try {
+		const res = await fetch('http://localhost:8000/api/posts', {
+			method: 'GET',
+			mode: 'cors',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		});
+		const resJson = await res.json();
+		console.log(resJson, 'json');
+		if (res.status === 200) {
+			return resJson;
+		} else {
+			console.log('some error occured');
+		}
+	} catch (err) {
+		console.log(err);
+	}
+}
+
 export async function getDrafts() {
 	try {
 		const cookie = document.cookie;

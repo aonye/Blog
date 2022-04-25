@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
@@ -6,16 +7,24 @@ import Post from './Post';
 import { getDrafts } from './FetchController.js';
 
 const Drafts = ({ setIDFromToken, refreshPosts, userID }) => {
+	const [loggedIn, setLoggedIn] = useState(<span>Not logged in</span>);
 	const [drafts, setDrafts] = useState(null);
 
 	useEffect(async () => {
-		const filteredDrafts = await makePosts();
-		console.log(filteredDrafts);
-		setDrafts(filteredDrafts);
+		const cookie = document.cookie;
+		if (cookie === '') {
+			setDrafts([]);
+		} else {
+			setLoggedIn(null);
+			const filteredDrafts = await makePosts();
+			console.log(filteredDrafts);
+			setDrafts(filteredDrafts);
+		}
 	}, []);
 
 	async function makePosts() {
 		const drafts = await getDrafts();
+		console.log(drafts);
 		return drafts.filter((i) => i.published === false);
 	}
 
@@ -34,6 +43,7 @@ const Drafts = ({ setIDFromToken, refreshPosts, userID }) => {
 						);
 				  })
 				: null}
+			{loggedIn}
 		</>
 	);
 };

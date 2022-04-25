@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import './App.scss';
 
+import { getAllPosts } from './components/FetchController';
 import Nav from './components/Nav.jsx';
 import Login from './components/Login';
 import Main from './components/Main.jsx';
@@ -15,7 +16,8 @@ function App() {
 	const [id, setID] = useState();
 
 	useEffect(async () => {
-		getAllPosts();
+		const posts = await getAllPosts();
+		setPosts(sortActivePosts(posts));
 		const cookie = document.cookie;
 		let token = null;
 		if (cookie) {
@@ -24,26 +26,30 @@ function App() {
 		setIDFromToken(token);
 	}, []);
 
-	async function getAllPosts() {
-		try {
-			const res = await fetch('http://localhost:8000/api/posts', {
-				method: 'GET',
-				mode: 'cors',
-				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-			const resJson = await res.json();
-			if (res.status === 200) {
-				setPosts(resJson);
-				return resJson;
-			} else {
-				console.log('some error occured');
-			}
-		} catch (err) {
-			console.log(err);
-		}
+	// async function getAllPosts() {
+	// 	try {
+	// 		const res = await fetch('http://localhost:8000/api/posts', {
+	// 			method: 'GET',
+	// 			mode: 'cors',
+	// 			credentials: 'include',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 			},
+	// 		});
+	// 		const resJson = await res.json();
+	// 		console.log(resJson, 'json');
+	// 		if (res.status === 200) {
+	// 			return resJson;
+	// 		} else {
+	// 			console.log('some error occured');
+	// 		}
+	// 	} catch (err) {
+	// 		console.log(err);
+	// 	}
+	// }
+
+	function sortActivePosts(posts = []) {
+		return posts.filter((i) => i.published === true);
 	}
 
 	async function getPosts() {
