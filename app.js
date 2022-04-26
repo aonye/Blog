@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, './client/build')));
 // app.use(express.static(path.resolve(__dirname, "./build")));
 
 const corsOptions = {
-	origin: 'http://localhost:3000',
+	origin: 'https://aonye.github.io/blog-client/',
 	credentials: true, // access-control-allow-credentials:true
 	optionSuccessStatus: 200,
 };
