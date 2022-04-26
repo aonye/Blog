@@ -4,6 +4,7 @@ import passport from '../../passport.js';
 import { index_get } from '../../controllers/api/index.js';
 import postRouter from './posts.js';
 import userRouter from './users.js';
+import loginRouter from './login.js';
 
 const APIRouter = Router();
 
@@ -15,6 +16,7 @@ APIRouter.use(
 
 // Route level auth
 APIRouter.use('/posts', postRouter);
+APIRouter.use('/login', loginRouter);
 
 APIRouter.get('/', index_get);
 

@@ -3,14 +3,10 @@ import jwt from 'jsonwebtoken';
 import passport from '../../passport.js';
 import 'dotenv/config';
 
-const router = express.Router();
-
-router.get('/', (req, res) => {
-	res.json('Test Login');
-});
+const loginRouter = express.Router();
 
 /* POST login. */
-router.post('/', (req, res, next) => {
+loginRouter.post('/', (req, res, next) => {
 	passport.authenticate('local', { session: false }, (err, user, info) => {
 		if (err || !user) {
 			return res.status(400).json({
@@ -33,4 +29,4 @@ router.post('/', (req, res, next) => {
 	})(req, res);
 });
 
-export default router;
+export default loginRouter;

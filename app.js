@@ -5,7 +5,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import path from 'path';
 import APIRouter from './routes/api/index.js';
-import login from './routes/app/login.js';
+import login from './routes/api/login.js';
 // import auth from './routes/app/auth.js';
 import bodyParser from 'body-parser';
 
@@ -47,7 +47,6 @@ app.use(cors(corsOptions)); // Use this after the variable declaration
 //     res.sendFile(path.join(__dirname, "oldpublic", "index.html"));
 // });
 
-app.use('/login', login);
 app.use('/api', APIRouter);
 
 app.get('*', (req, res) => {

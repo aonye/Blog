@@ -1,48 +1,32 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import jwtDecode from 'jwt-decode';
+import { validateUser } from './FetchController.js';
 
 const Login = ({ setID }) => {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [msg, setMsg] = useState('');
 
-	// const history = useHistory();
+	let history = useHistory();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		try {
-			const res = await fetch('https://blogaonye.herokuapp.com/login', {
-				method: 'POST',
-				mode: 'cors',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${document.cookie.token}`,
-				},
-				body: JSON.stringify({
-					username,
-					password,
-				}),
-			});
-			const resJson = await res.json();
-			console.log(resJson.token, 'token');
-			if (res.status === 200) {
-				setUsername('');
-				setPassword('');
-				setMsg('User created successfully');
-				document.cookie = `token=${resJson.token}; SameSite=None; Secure`;
-				const id = jwtDecode(resJson.token).id;
-				console.log(id, 'info');
-				setTimeout(() => {
-					// history.push('/');
-					setID(id);
-				}, 5000);
-			} else {
-				setMsg('Some error occured');
-			}
-		} catch (err) {
-			console.log(err);
+		const res = await validateUser(username, password);
+		setUsername('');
+		setPassword('');
+		if (!res) {
+			setMsg('Some error occured');
+		} else {
+			setMsg('User created successfully');
+			document.cookie = `token=${res.token}; SameSite=None; Secure`;
+			const id = jwtDecode(res.token).id;
+			setTimeout(() => {
+				setID(id);
+				history.push('/');
+			}, 5000);
 		}
 	};
 	return (
