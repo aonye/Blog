@@ -50,7 +50,11 @@ app.use(cors(corsOptions)); // Use this after the variable declaration
 app.use('/api', APIRouter);
 
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, '../client/build/index.html'));
+	let url = path.join(__dirname, '../client/build', 'index.html');
+	if (!url.startsWith('/app/'))
+		// since we're on local windows
+		url = url.substring(1);
+	res.sendFile(url);
 });
 
 const PORT = process.env.PORT || 8000;
